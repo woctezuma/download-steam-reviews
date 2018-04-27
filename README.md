@@ -24,7 +24,7 @@ For instance, for [SpyParty](https://store.steampowered.com/app/329070/SpyParty/
 
 ![appID for SpyParty](https://i.imgur.com/LNlyUFW.png)
 
-- Call the Pythons script. The Steam API is rate-limited so you should be able to download about 10 reviews per second.
+- Call the Python script. The Steam API is rate-limited so you should be able to download about 10 reviews per second.
 
 ```
 python download_reviews.py
