@@ -6,10 +6,12 @@
 
 import csv
 import json
-import time
-import requests
 import logging
-import os.path
+import pathlib
+import time
+
+import requests
+
 
 def parse_id(i):
     """Since we deal with both strings and ints, force appid to be correct."""
@@ -26,7 +28,8 @@ def id_reader():
         for row in reader:
             yield parse_id(row[0])
 
-def get_id_processed_filename(use_date = True):
+
+def get_id_processed_filename(use_date=True):
     import time
 
     # Get current day as yyyymmdd format
@@ -40,6 +43,7 @@ def get_id_processed_filename(use_date = True):
 
     return id_processed_filename
 
+
 def previous_results():
     """Return a set of all previous found ID's."""
     temp_filename = get_id_processed_filename()
@@ -51,8 +55,8 @@ def previous_results():
                 if appid:
                     all_ids.add(appid)
     except FileNotFoundError:
-        with open(temp_filename, "w") as f:
-            print('Creating ' + temp_filename)
+        pathlib.Path(temp_filename).touch()
+        print('Creating ' + temp_filename)
     return all_ids
 
 
@@ -96,7 +100,6 @@ def main():
     log.info("Opening " + get_id_processed_filename())
     query_count = 0
     game_count = 0
-    game = dict()
 
     temp_filename = get_id_processed_filename()
 
@@ -108,7 +111,7 @@ def main():
         output_file = "review_" + str(appid) + ".json"
         data_filename = data_path + output_file
 
-        if os.path.isfile(data_filename):
+        if pathlib.Path(data_filename).is_file():
             if appid in previos_ids:
                 log.info("Skipping previously found id %d", appid)
                 continue
@@ -118,11 +121,11 @@ def main():
         try:
             with open(data_filename, 'r', encoding="utf8") as in_json_file:
                 review_dict = json.load(in_json_file)
-        except:
+        except FileNotFoundError:
             review_dict = dict()
             review_dict["reviews"] = dict()
 
-        previous_reviewIDs = set( review_dict["reviews"].keys() )
+        previous_review_ids = set(review_dict["reviews"].keys())
 
         url = api_url + str(appid)
 
@@ -173,12 +176,12 @@ def main():
                 time.sleep(wait_time)
                 query_count = 0
 
-            if any([ review["recommendationid"] in previous_reviewIDs for review in downloaded_reviews ]):
+            if any([review["recommendationid"] in previous_review_ids for review in downloaded_reviews]):
                 break
 
-        for review in [r for r in new_reviews if r["recommendationid"] not in previous_reviewIDs]:
-            reviewID = review["recommendationid"]
-            review_dict["reviews"][reviewID] = review
+        for review in [r for r in new_reviews if r["recommendationid"] not in previous_review_ids]:
+            review_id = review["recommendationid"]
+            review_dict["reviews"][review_id] = review
 
         with open(data_filename, "w") as g:
             g.write(json.dumps(review_dict) + '\n')
