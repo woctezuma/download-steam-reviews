@@ -29,3 +29,9 @@ For instance, for [SpyParty](https://store.steampowered.com/app/329070/SpyParty/
 ```
 python download_reviews.py
 ```
+
+## References
+
+- [my original Steam-Reviews repository](https://github.com/woctezuma/steam-reviews)
+
+- [a snapshot of Steam-Reviews data for hidden gems](https://github.com/woctezuma/steam-reviews-data)
