@@ -11,7 +11,9 @@ This repository contains Python code to download every Steam review for the game
 
 - Install the required packages:
 
-`pip install -r requirements.txt`
+```
+pip install -r requirements.txt
+```
 
 ## Usage
 
@@ -24,4 +26,6 @@ For instance, for [SpyParty](https://store.steampowered.com/app/329070/SpyParty/
 
 - Call the Pythons script. The Steam API is rate-limited so you should be able to download about 10 reviews per second.
 
-`python download_reviews.py`
+```
+python download_reviews.py
+```
