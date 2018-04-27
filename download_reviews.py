@@ -56,10 +56,8 @@ def previous_results():
     return all_ids
 
 
-def main(download_reference_hidden_gems_as_well = False):
+def main():
     """Entry point."""
-
-    from appids import appid_hidden_gems_reference_set
 
     import pathlib
 
@@ -104,9 +102,6 @@ def main(download_reference_hidden_gems_as_well = False):
 
     log.info("Opening idlist.txt")
     appid_list = [appid for appid in id_reader()]
-
-    if download_reference_hidden_gems_as_well:
-        appid_list = list(set(appid_list).union(appid_hidden_gems_reference_set))
 
     for appid in appid_list:
 
@@ -200,5 +195,4 @@ def main(download_reference_hidden_gems_as_well = False):
 
 
 if __name__ == "__main__":
-    download_reference_hidden_gems_as_well = True
-    main(download_reference_hidden_gems_as_well)
+    main()
