@@ -196,6 +196,8 @@ def main():
 
     log.info("Game records written: %d", game_count)
 
+    return True
+
 
 if __name__ == "__main__":
     main()
