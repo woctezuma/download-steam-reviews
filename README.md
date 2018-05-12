@@ -1,7 +1,14 @@
-# Download Steam Reviews [![Build status][Build image]][Build]
+# Download Steam Reviews [![Build status][Build image]][Build] [![Updates][Dependency image]][PyUp] [![Python 3][Python3 image]][PyUp] [![Code coverage][Codecov image]][Codecov]
 
   [Build]: https://travis-ci.org/woctezuma/download-steam-reviews
   [Build image]: https://travis-ci.org/woctezuma/download-steam-reviews.svg?branch=master
+
+  [PyUp]: https://pyup.io/repos/github/woctezuma/download-steam-reviews/
+  [Dependency image]: https://pyup.io/repos/github/woctezuma/download-steam-reviews/shield.svg
+  [Python3 image]: https://pyup.io/repos/github/woctezuma/download-steam-reviews/python-3-shield.svg
+
+  [Codecov]: https://codecov.io/gh/woctezuma/download-steam-reviews
+  [Codecov image]: https://codecov.io/gh/woctezuma/download-steam-reviews/branch/master/graph/badge.svg
 
 This repository contains Python code to download every Steam review for the games of your choice.
 
