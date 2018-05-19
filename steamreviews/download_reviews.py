@@ -117,7 +117,9 @@ def get_output_filename(app_id):
     return get_data_path() + 'review_' + str(app_id) + '.json'
 
 
-def load_review_dict(review_data_filename):
+def load_review_dict(app_id):
+    review_data_filename = get_output_filename(app_id)
+
     try:
         with open(review_data_filename, 'r', encoding='utf8') as in_json_file:
             review_dict = json.load(in_json_file)
@@ -159,8 +161,7 @@ def download_reviews_for_app_id_with_offset(app_id, offset=0):
 def download_reviews_for_app_id(app_id, query_count=0):
     rate_limits = get_steam_api_rate_limits()
 
-    data_filename = get_output_filename(app_id)
-    review_dict = load_review_dict(data_filename)
+    review_dict = load_review_dict(app_id)
 
     previous_review_ids = review_dict['reviews']
 
@@ -198,7 +199,7 @@ def download_reviews_for_app_id(app_id, query_count=0):
         if review_id not in previous_review_ids:
             review_dict['reviews'][review_id] = review
 
-    with open(data_filename, 'w') as f:
+    with open(get_output_filename(app_id), 'w') as f:
         f.write(json.dumps(review_dict) + '\n')
 
     return review_dict, query_count
@@ -240,14 +241,9 @@ def download_reviews(input_app_ids=None, previously_processed_app_ids=None):
 
     log.info('Game records written: {}'.format(game_count))
 
-    return
-
-
-def main():
-    # noinspection PyTypeChecker
-    download_reviews(input_app_ids=None, previously_processed_app_ids=None)
     return True
 
 
 if __name__ == '__main__':
-    main()
+    # noinspection PyTypeChecker
+    download_reviews(input_app_ids=None, previously_processed_app_ids=None)
