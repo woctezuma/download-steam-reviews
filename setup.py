@@ -9,14 +9,14 @@ setup(
     install_requires=[
         'requests',
     ],
-    version='0.2',
+    version='0.3',
     description='An API to download Steam reviews',
     long_description='Steam Reviews: an API to download Steam reviews, written in Python 3.',
     long_description_content_type='text/x-rst',
     author='Wok',
     author_email='wok@tuta.io',
     url='https://github.com/woctezuma/download-steam-reviews',
-    download_url='https://github.com/woctezuma/download-steam-reviews/archive/0.2.tar.gz',
+    download_url='https://github.com/woctezuma/download-steam-reviews/archive/0.3.tar.gz',
     keywords=['steam', 'review', 'reviews', 'download', 'api'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
