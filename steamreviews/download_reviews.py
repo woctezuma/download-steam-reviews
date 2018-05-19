@@ -222,7 +222,7 @@ def download_reviews(input_app_ids=None, previously_processed_app_ids=None):
             print('Skipping previously found appID = {}'.format(app_id))
             continue
         else:
-            print('Downloading reviews for appID = '.format(app_id))
+            print('Downloading reviews for appID = {}'.format(app_id))
 
         review_dict, query_count = download_reviews_for_app_id(app_id, query_count)
 
@@ -231,8 +231,8 @@ def download_reviews(input_app_ids=None, previously_processed_app_ids=None):
         with open(get_processed_app_ids_filename(), 'a') as f:
             f.write(str(app_id) + '\n')
 
-        print('[appID = {}] num_reviews = {} (expected: {}'.format(app_id, len(review_dict['reviews']),
-                                                                   review_dict['query_summary']['total_reviews']))
+        print('[appID = {}] num_reviews = {} (expected: {})'.format(app_id, len(review_dict['reviews']),
+                                                                    review_dict['query_summary']['total_reviews']))
 
     print('Game records written: {}'.format(game_count))
 
