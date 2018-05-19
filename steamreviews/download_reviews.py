@@ -11,7 +11,6 @@
 #   https://raw.githubusercontent.com/CraigKelly/steam-data/master/data/games.py
 
 import json
-import logging
 import pathlib
 import time
 
@@ -214,20 +213,16 @@ def download_reviews(input_app_ids=None, previously_processed_app_ids=None):
         print('Loading {}'.format(get_processed_app_ids_filename()))
         previously_processed_app_ids = get_processed_app_ids()
 
-    logging.basicConfig(level=logging.DEBUG)
-    logging.getLogger('requests').setLevel(level=logging.DEBUG)
-    log = logging.getLogger(name=__name__)
-
     query_count = 0
     game_count = 0
 
     for app_id in input_app_ids:
 
         if app_id in previously_processed_app_ids:
-            log.info('Skipping previously found appID = {}'.format(app_id))
+            print('Skipping previously found appID = {}'.format(app_id))
             continue
         else:
-            log.info('Downloading reviews for appID = '.format(app_id))
+            print('Downloading reviews for appID = '.format(app_id))
 
         review_dict, query_count = download_reviews_for_app_id(app_id, query_count)
 
@@ -236,10 +231,10 @@ def download_reviews(input_app_ids=None, previously_processed_app_ids=None):
         with open(get_processed_app_ids_filename(), 'a') as f:
             f.write(str(app_id) + '\n')
 
-        log.info('[appID = {}] num_reviews = {} (expected: {}'.format(app_id, len(review_dict['reviews']),
-                                                                      review_dict['query_summary']['total_reviews']))
+        print('[appID = {}] num_reviews = {} (expected: {}'.format(app_id, len(review_dict['reviews']),
+                                                                   review_dict['query_summary']['total_reviews']))
 
-    log.info('Game records written: {}'.format(game_count))
+    print('Game records written: {}'.format(game_count))
 
     return True
 
