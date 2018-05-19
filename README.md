@@ -2,8 +2,8 @@
 
 [![PyPI status][PyPI image]][PyPI] [![Build status][Build image]][Build] [![Updates][Dependency image]][PyUp] [![Python 3][Python3 image]][PyUp] [![Code coverage][Coveralls image]][Coveralls] [![Code coverage BIS][Codecov image]][Codecov]
 
-  [PyPI]: https://pypi.python.org/pypi/download-steam-reviews
-  [PyPI image]: https://badge.fury.io/py/download-steam-reviews.svg
+  [PyPI]: https://pypi.python.org/pypi/steamreviews
+  [PyPI image]: https://badge.fury.io/py/steamreviews.svg
 
   [Build]: https://travis-ci.org/woctezuma/download-steam-reviews
   [Build image]: https://travis-ci.org/woctezuma/download-steam-reviews.svg?branch=master
