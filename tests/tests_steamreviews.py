@@ -17,7 +17,7 @@ class TestSteamReviewsMethods(unittest.TestCase):
 
     def test_download_reviews(self):
         app_ids = [329070, 573170]
-        steamreviews.download_reviews(app_ids)
+        steamreviews.download_reviews_for_app_id_batch(app_ids)
         review_dict = steamreviews.load_review_dict(329070)
         self.assertGreater(len(review_dict['reviews']), 1)
 

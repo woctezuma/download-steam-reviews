@@ -204,7 +204,7 @@ def download_reviews_for_app_id(app_id, query_count=0):
     return review_dict, query_count
 
 
-def download_reviews(input_app_ids=None, previously_processed_app_ids=None):
+def download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_app_ids=None):
     if input_app_ids is None:
         print('Loading {}'.format(get_input_app_ids_filename()))
         input_app_ids = [app_id for app_id in app_id_reader()]
@@ -241,4 +241,4 @@ def download_reviews(input_app_ids=None, previously_processed_app_ids=None):
 
 if __name__ == '__main__':
     # noinspection PyTypeChecker
-    download_reviews(input_app_ids=None, previously_processed_app_ids=None)
+    download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_app_ids=None)

@@ -46,7 +46,7 @@ For instance, for [SpyParty](https://store.steampowered.com/app/329070/SpyParty/
 ```python
 import steamreviews
 
-steamreviews.download_reviews()
+steamreviews.download_reviews_for_app_id_batch()
 ```
 
 ### Process a batch of appIDs
@@ -55,7 +55,7 @@ steamreviews.download_reviews()
 import steamreviews
 
 app_ids = [329070, 573170]
-steamreviews.download_reviews(app_ids)
+steamreviews.download_reviews_for_app_id_batch(app_ids)
 ```
 
 ### Download reviews for one appID
