@@ -172,17 +172,20 @@ def download_reviews_for_app_id(app_id, query_count=0):
     while (num_reviews is None) or (offset < num_reviews):
         success_flag, downloaded_reviews, query_summary = download_reviews_for_app_id_with_offset(app_id, offset)
 
-        if success_flag:
+        delta_reviews = len(downloaded_reviews)
+
+        offset += delta_reviews
+        query_count += 1
+
+        if success_flag and delta_reviews > 0:
             new_reviews.extend(downloaded_reviews)
         else:
             break
 
-        offset += len(downloaded_reviews)
-        query_count += 1
-
         if num_reviews is None:
             review_dict['query_summary'] = query_summary
             num_reviews = query_summary['total_reviews']
+            print('[appID = {}] expected #reviews = {}'.format(app_id, review_dict['query_summary']['total_reviews']))
 
         if query_count >= rate_limits['max_num_queries']:
             cooldown_duration = rate_limits['cooldown']
