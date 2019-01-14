@@ -1,6 +1,6 @@
 # Download Steam Reviews
 
-[![PyPI status][PyPI image]][PyPI] [![Build status][Build image]][Build] [![Updates][Dependency image]][PyUp] [![Python 3][Python3 image]][PyUp] [![Code coverage][Coveralls image]][Coveralls] [![Code coverage BIS][Codecov image]][Codecov]
+[![PyPI status][PyPI image]][PyPI] [![Build status][Build image]][Build] [![Updates][Dependency image]][PyUp] [![Python 3][Python3 image]][PyUp] [![Code coverage][Coveralls image]][Coveralls] [![Code coverage BIS][Codecov image]][Codecov] [![Code Quality][codacy image]][codacy]
 
   [PyPI]: https://pypi.python.org/pypi/steamreviews
   [PyPI image]: https://badge.fury.io/py/steamreviews.svg
@@ -17,6 +17,9 @@
 
   [Codecov]: https://codecov.io/gh/woctezuma/download-steam-reviews
   [Codecov image]: https://codecov.io/gh/woctezuma/download-steam-reviews/branch/master/graph/badge.svg
+
+  [codacy]: https://www.codacy.com/app/woctezuma/download-steam-reviews
+  [codacy image]: https://api.codacy.com/project/badge/Grade/253164b80b704f00a1fd2b083f1348bb 
 
 This repository contains Python code to download every Steam review for the games of your choice.
 
