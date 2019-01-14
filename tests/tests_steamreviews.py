@@ -12,7 +12,7 @@ class TestSteamReviewsMethods(unittest.TestCase):
 
     def test_download_reviews_for_app_id(self):
         app_id = 573170
-        review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id)
+        _, query_count = steamreviews.download_reviews_for_app_id(app_id)
         self.assertGreater(query_count, 0)
 
     def test_download_reviews(self):
