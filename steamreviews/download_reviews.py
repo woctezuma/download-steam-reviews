@@ -141,8 +141,13 @@ def download_reviews_for_app_id_with_offset(app_id, offset=0):
     req_data['start_offset'] = str(offset)
 
     resp_data = requests.get(get_steam_api_url() + req_data['appids'], params=req_data)
+    status_code = resp_data.status_code
 
-    result = resp_data.json()
+    if status_code == 200:
+        result = resp_data.json()
+    else:
+        result = {'success': 0}
+        print('Faulty response status code = {} for appID = {} and offset = {}'.format(status_code, app_id, offset))
 
     success_flag = bool(result['success'] == 1)
 
