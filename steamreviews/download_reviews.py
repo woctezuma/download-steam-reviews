@@ -144,7 +144,7 @@ def download_reviews_for_app_id_with_offset(app_id, offset=0):
 
     result = resp_data.json()
 
-    success_flag = result['success']
+    success_flag = bool(result['success'] == 1)
 
     try:
         downloaded_reviews = result['reviews']
