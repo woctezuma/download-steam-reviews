@@ -70,7 +70,7 @@ app_id = 573170
 review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id)
 ```
 
-### Download reviews for one appID with specific request parameters (language, sentiment, purchase type)
+### Download reviews for one appID with specific request parameters (language, sentiment, store)
 
 ```python
 import steamreviews
