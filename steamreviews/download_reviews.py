@@ -174,12 +174,13 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
 
     review_dict = load_review_dict(app_id)
 
-    previous_review_ids = review_dict['reviews']
+    previous_review_ids = set(review_dict['reviews'])
 
     num_reviews = None
 
     offset = 0
     new_reviews = []
+    new_review_ids = set()
 
     while (num_reviews is None) or (offset < num_reviews):
         success_flag, downloaded_reviews, query_summary = download_reviews_for_app_id_with_offset(app_id, offset,
@@ -192,6 +193,15 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
 
         if success_flag and delta_reviews > 0:
             new_reviews.extend(downloaded_reviews)
+
+            downloaded_review_ids = [review['recommendationid'] for review in downloaded_reviews]
+
+            # Detect full redundancy in the latest downloaded reviews
+            if new_review_ids.issuperset(downloaded_review_ids):
+                break
+            else:
+                new_review_ids = new_review_ids.union(downloaded_review_ids)
+
         else:
             break
 
@@ -206,7 +216,7 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
             time.sleep(cooldown_duration)
             query_count = 0
 
-        if any([review['recommendationid'] in previous_review_ids for review in downloaded_reviews]):
+        if not previous_review_ids.isdisjoint(downloaded_review_ids):
             break
 
     for review in new_reviews:
