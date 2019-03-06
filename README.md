@@ -70,7 +70,7 @@ app_id = 573170
 review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id)
 ```
 
-### Download reviews for one appID with specific request parameters
+### Download reviews for one appID with specific request parameters (language, sentiment, purchase type)
 
 ```python
 import steamreviews
@@ -81,6 +81,26 @@ request_params['language'] = 'english'
 # Reference: https://partner.steamgames.com/doc/store/getreviews
 request_params['review_type'] = 'positive'
 request_params['purchase_type'] = 'steam'
+
+app_id = 573170
+review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id,
+                                                                    chosen_request_params=request_params)
+
+```
+
+### Download a few reviews for one appID, sorted by helpfulness, and within a specific time-window
+
+**Caveat**:
+-   with `filter` set to `all` instead of `recent`, you might not be able to download **every** review,
+-   the parameter `day_range` is only taken into account by Steam API when `filter` is set to `all`.
+
+```python
+import steamreviews
+
+request_params = dict()
+# Reference: https://partner.steamgames.com/doc/store/getreviews
+request_params['filter'] = 'all'  # reviews are sorted by helpfulness instead of chronology
+request_params['day_range'] = '28'  # focus on reviews which were published during the past four weeks
 
 app_id = 573170
 review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id,
