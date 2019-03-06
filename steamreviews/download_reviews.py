@@ -67,19 +67,26 @@ def get_processed_app_ids():
     return all_app_ids
 
 
-def get_default_request_parameters():
+def get_default_request_parameters(chosen_request_params=None):
     # Objective: return a dict of default paramters for a request to Steam API.
     #
-    # Reference:
+    # References:
+    #   https://partner.steamgames.com/doc/store/getreviews
+    #   https://partner.steamgames.com/doc/store/localization#supported_languages
     #   https://gist.github.com/adambuczek/95906b0c899c5311daeac515f740bf33
 
     default_request_parameters = {
         'json': '1',
-        'language': 'all',  # e.g. english or schinese
-        'filter': 'recent',  # e.g. funny or helpful
-        'review_type': 'all',
-        'purchase_type': 'all',
+        'language': 'all',  # API language code e.g. english or schinese
+        'filter': 'recent',  # To work with 'start_offset', 'filter' has to be set to either recent or updated, not all.
+        'review_type': 'all',  # e.g. positive or negative
+        'purchase_type': 'all',  # e.g. steam or non_steam_purchase
+        'num_per_page': '100',  # default is 20, maximum is 100
     }
+
+    if chosen_request_params is not None:
+        for element in chosen_request_params:
+            default_request_parameters[element] = chosen_request_params[element]
 
     return default_request_parameters
 
@@ -129,15 +136,15 @@ def load_review_dict(app_id):
     return review_dict
 
 
-def get_request(app_id):
-    request = dict(get_default_request_parameters())
+def get_request(app_id, chosen_request_params=None):
+    request = dict(get_default_request_parameters(chosen_request_params))
     request['appids'] = str(app_id)
 
     return request
 
 
-def download_reviews_for_app_id_with_offset(app_id, offset=0):
-    req_data = get_request(app_id)
+def download_reviews_for_app_id_with_offset(app_id, offset=0, chosen_request_params=None):
+    req_data = get_request(app_id, chosen_request_params)
     req_data['start_offset'] = str(offset)
 
     resp_data = requests.get(get_steam_api_url() + req_data['appids'], params=req_data)
@@ -162,7 +169,7 @@ def download_reviews_for_app_id_with_offset(app_id, offset=0):
     return success_flag, downloaded_reviews, query_summary
 
 
-def download_reviews_for_app_id(app_id, query_count=0):
+def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=None):
     rate_limits = get_steam_api_rate_limits()
 
     review_dict = load_review_dict(app_id)
@@ -175,7 +182,8 @@ def download_reviews_for_app_id(app_id, query_count=0):
     new_reviews = []
 
     while (num_reviews is None) or (offset < num_reviews):
-        success_flag, downloaded_reviews, query_summary = download_reviews_for_app_id_with_offset(app_id, offset)
+        success_flag, downloaded_reviews, query_summary = download_reviews_for_app_id_with_offset(app_id, offset,
+                                                                                                  chosen_request_params)
 
         delta_reviews = len(downloaded_reviews)
 
@@ -212,7 +220,8 @@ def download_reviews_for_app_id(app_id, query_count=0):
     return review_dict, query_count
 
 
-def download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_app_ids=None):
+def download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_app_ids=None,
+                                      chosen_request_params=None):
     if input_app_ids is None:
         print('Loading {}'.format(get_input_app_ids_filename()))
         input_app_ids = [app_id for app_id in app_id_reader()]
@@ -232,7 +241,7 @@ def download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_a
         else:
             print('Downloading reviews for appID = {}'.format(app_id))
 
-        review_dict, query_count = download_reviews_for_app_id(app_id, query_count)
+        review_dict, query_count = download_reviews_for_app_id(app_id, query_count, chosen_request_params)
 
         game_count += 1
 
