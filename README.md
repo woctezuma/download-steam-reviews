@@ -47,6 +47,7 @@ steamreviews.download_reviews_for_app_id_batch()
 ```
 
 NB: If you do not know the appID of a game, look for it on the Steam store. The appID is a unique number in the URL.
+
 For instance, for [SpyParty](https://store.steampowered.com/app/329070/SpyParty/), the appID is 329070.
 
 ![appID for SpyParty](https://i.imgur.com/LNlyUFW.png)
