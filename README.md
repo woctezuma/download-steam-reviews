@@ -37,20 +37,19 @@ The Steam API is rate-limited so you should be able to download about 10 reviews
 
 ### Process a batch of appIDs, written down in a text file
 
-- For every game of interest, write down its appID in a text file named `idlist.txt`. There should be an appID per line.
-
-If you do not know the appID of a game, look for it on the Steam store. The appID is a unique number in the URL.
-For instance, for [SpyParty](https://store.steampowered.com/app/329070/SpyParty/), the appID is 329070.
-
-![appID for SpyParty](https://i.imgur.com/LNlyUFW.png)
-
-- Then proceed as follows: 
+-   For every game of interest, write down its appID in a text file named `idlist.txt`. There should be an appID per line.
+-   Then proceed as follows: 
 
 ```python
 import steamreviews
 
 steamreviews.download_reviews_for_app_id_batch()
 ```
+
+NB: If you do not know the appID of a game, look for it on the Steam store. The appID is a unique number in the URL.
+For instance, for [SpyParty](https://store.steampowered.com/app/329070/SpyParty/), the appID is 329070.
+
+![appID for SpyParty](https://i.imgur.com/LNlyUFW.png)
 
 ### Process a batch of appIDs
 
