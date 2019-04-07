@@ -96,11 +96,11 @@ review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id,
                                                                     chosen_request_params=request_params)
 ```
 
-### Download a few reviews for one appID, sorted by helpfulness, and within a specific time-window
+### Download reviews for one appID, sorted by helpfulness, and within a specific time-window
 
 **Caveat**:
--   with `filter` set to `all` instead of `recent`, you might not be able to download **every** review,
--   the parameter `day_range` is only taken into account by Steam API when `filter` is set to `all`.
+-   the parameter `day_range` is only taken into account by Steam API when `filter` is set to `all`,
+-   with `filter` set to `all` instead of `recent`, you may not be able to download **every** review.
 
 ```python
 import steamreviews
