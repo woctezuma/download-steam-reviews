@@ -10,6 +10,7 @@
 # Reference:
 #   https://raw.githubusercontent.com/CraigKelly/steam-data/master/data/games.py
 
+import datetime
 import json
 import pathlib
 import time
@@ -172,6 +173,14 @@ def download_reviews_for_app_id_with_offset(app_id, offset=0, chosen_request_par
 def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=None):
     rate_limits = get_steam_api_rate_limits()
 
+    request = dict(get_default_request_parameters(chosen_request_params))
+    check_review_timestamp = bool('day_range' in request.keys() and request['filter'] != 'all')
+    if check_review_timestamp:
+        current_date = datetime.datetime.now()
+        num_days = int(request['day_range'])
+        date_threshold = current_date - datetime.timedelta(days=num_days)
+        timestamp_threshold = datetime.datetime.timestamp(date_threshold)
+
     review_dict = load_review_dict(app_id)
 
     previous_review_ids = set(review_dict['reviews'])
@@ -192,6 +201,24 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
         query_count += 1
 
         if success_flag and delta_reviews > 0:
+
+            if check_review_timestamp:
+
+                if request['filter'] == 'updated':
+                    timestamp_str_field = 'timestamp_updated'
+                else:
+                    timestamp_str_field = 'timestamp_created'
+
+                checked_reviews = list(filter(lambda x: x[timestamp_str_field] > timestamp_threshold,
+                                              downloaded_reviews))
+
+                delta_checked_reviews = len(checked_reviews)
+
+                if delta_checked_reviews == 0:
+                    break
+                else:
+                    downloaded_reviews = checked_reviews
+
             new_reviews.extend(downloaded_reviews)
 
             downloaded_review_ids = [review['recommendationid'] for review in downloaded_reviews]
