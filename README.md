@@ -98,7 +98,7 @@ review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id,
 
 ### Download a few of the most helpful reviews for one appID, which were created within a specific time-window
 
-**Caveat**: with `filter` set to `all`, you will only be able to download **a few** review within the specified time-window.
+**Caveat**: with `filter` set to `all`, you will only be able to download **a few** reviews within the specified time-window.
 
 ```python
 import steamreviews
