@@ -96,11 +96,11 @@ review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id,
                                                                     chosen_request_params=request_params)
 ```
 
-### Download reviews for one appID, sorted by helpfulness, and within a specific time-window
+### Download a few reviews for one appID, sorted by helpfulness, and within a specific time-window
 
 **Caveat**:
--   the parameter `day_range` is only taken into account by Steam API when `filter` is set to `all`,
--   with `filter` set to `all` instead of `recent`, you may not be able to download **every** review.
+-   the parameter `day_range` is only taken into account **by Steam API** when `filter` is set to `all`,
+-   with `filter` set to `all`, you may **not** be able to download **every** review within the specified time-window.
 
 ```python
 import steamreviews
@@ -109,6 +109,40 @@ request_params = dict()
 # Reference: https://partner.steamgames.com/doc/store/getreviews
 request_params['filter'] = 'all'  # reviews are sorted by helpfulness instead of chronology
 request_params['day_range'] = '28'  # focus on reviews which were published during the past four weeks
+
+app_id = 573170
+review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id,
+                                                                    chosen_request_params=request_params)
+```
+
+### Download reviews for one appID, which were created within a specific time-window
+
+I have tweaked calls to Steam API so that the parameter `day_range` works with `filter` set to `recent`.
+This should allow you to download **every** review **created** within the specified time-window.
+
+```python
+import steamreviews
+
+request_params = dict()
+request_params['filter'] = 'recent'
+request_params['day_range'] = '28'
+
+app_id = 573170
+review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id,
+                                                                    chosen_request_params=request_params)
+```
+
+### Download reviews for one appID, which were updated within a specific time-window
+
+I have tweaked calls to Steam API so that the parameter `day_range` works with `filter` set to `updated`.
+This should allow you to download **every** review **updated** within the specified time-window.
+
+```python
+import steamreviews
+
+request_params = dict()
+request_params['filter'] = 'updated'
+request_params['day_range'] = '28'
 
 app_id = 573170
 review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id,
