@@ -234,8 +234,10 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
 
         if num_reviews is None:
             review_dict['query_summary'] = query_summary
+            # Initialize num_reviews with the correct value (this is crucial for the loop, do not change variable name):
             num_reviews = query_summary['total_reviews']
-            print('[appID = {}] expected #reviews = {}'.format(app_id, review_dict['query_summary']['total_reviews']))
+            # Also rely on num_reviews for display:
+            print('[appID = {}] expected #reviews = {}'.format(app_id, num_reviews))
 
         if query_count >= rate_limits['max_num_queries']:
             cooldown_duration = rate_limits['cooldown']
@@ -285,8 +287,11 @@ def download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_a
         with open(get_processed_app_ids_filename(), 'a') as f:
             f.write(str(app_id) + '\n')
 
-        print('[appID = {}] num_reviews = {} (expected: {})'.format(app_id, len(review_dict['reviews']),
-                                                                    review_dict['query_summary']['total_reviews']))
+        num_downloaded_reviews = len(review_dict['reviews'])
+        num_expected_reviews = review_dict['query_summary']['total_reviews']
+        print('[appID = {}] num_reviews = {} (expected: {})'.format(app_id,
+                                                                    num_downloaded_reviews,
+                                                                    num_expected_reviews))
 
     print('Game records written: {}'.format(game_count))
 
