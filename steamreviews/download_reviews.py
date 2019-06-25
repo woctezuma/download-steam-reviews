@@ -124,6 +124,13 @@ def get_output_filename(app_id):
     return get_data_path() + 'review_' + str(app_id) + '.json'
 
 
+def get_dummy_query_summary():
+    query_summary = dict()
+    query_summary['total_reviews'] = -1
+
+    return query_summary
+
+
 def load_review_dict(app_id):
     review_data_filename = get_output_filename(app_id)
 
@@ -133,6 +140,7 @@ def load_review_dict(app_id):
     except FileNotFoundError:
         review_dict = dict()
         review_dict['reviews'] = dict()
+        review_dict['query_summary'] = get_dummy_query_summary()
 
     return review_dict
 
@@ -165,7 +173,7 @@ def download_reviews_for_app_id_with_offset(app_id, offset=0, chosen_request_par
     except KeyError:
         success_flag = False
         downloaded_reviews = []
-        query_summary = dict()
+        query_summary = get_dummy_query_summary()
 
     return success_flag, downloaded_reviews, query_summary
 
