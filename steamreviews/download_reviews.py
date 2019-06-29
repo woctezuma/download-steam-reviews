@@ -115,6 +115,7 @@ def get_steam_api_rate_limits():
     rate_limits = {
         'max_num_queries': 150,
         'cooldown': (5 * 60) + 10,  # 5 minutes plus a cushion
+        'cooldown_bad_gateway': 10,  # arbitrary value to tackle 502 Bad Gateway due to saturated servers (during sales)
     }
 
     return rate_limits
@@ -152,12 +153,30 @@ def get_request(app_id, chosen_request_params=None):
     return request
 
 
-def download_reviews_for_app_id_with_offset(app_id, offset=0, chosen_request_params=None):
+def download_reviews_for_app_id_with_offset(app_id,
+                                            query_count,
+                                            offset=0,
+                                            chosen_request_params=None):
+    rate_limits = get_steam_api_rate_limits()
+
     req_data = get_request(app_id, chosen_request_params)
     req_data['start_offset'] = str(offset)
 
     resp_data = requests.get(get_steam_api_url() + req_data['appids'], params=req_data)
     status_code = resp_data.status_code
+    query_count += 1
+
+    while (status_code == 502) and (query_count < rate_limits['max_num_queries']):
+        cooldown_duration_for_bad_gateway = rate_limits['cooldown_bad_gateway']
+        print('{} Bad Gateway for appID = {} and offset = {}. Cooldown: {} seconds'.format(status_code,
+                                                                                           app_id,
+                                                                                           offset,
+                                                                                           cooldown_duration_for_bad_gateway))
+        time.sleep(cooldown_duration_for_bad_gateway)
+
+        resp_data = requests.get(get_steam_api_url() + req_data['appids'], params=req_data)
+        status_code = resp_data.status_code
+        query_count += 1
 
     if status_code == 200:
         result = resp_data.json()
@@ -175,7 +194,7 @@ def download_reviews_for_app_id_with_offset(app_id, offset=0, chosen_request_par
         downloaded_reviews = []
         query_summary = get_dummy_query_summary()
 
-    return success_flag, downloaded_reviews, query_summary
+    return success_flag, downloaded_reviews, query_summary, query_count
 
 
 def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=None):
@@ -200,13 +219,14 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
     new_review_ids = set()
 
     while (num_reviews is None) or (offset < num_reviews):
-        success_flag, downloaded_reviews, query_summary = download_reviews_for_app_id_with_offset(app_id, offset,
-                                                                                                  chosen_request_params)
+        success_flag, downloaded_reviews, query_summary, query_count = download_reviews_for_app_id_with_offset(app_id,
+                                                                                                               query_count,
+                                                                                                               offset,
+                                                                                                               chosen_request_params)
 
         delta_reviews = len(downloaded_reviews)
 
         offset += delta_reviews
-        query_count += 1
 
         if success_flag and delta_reviews > 0:
 
