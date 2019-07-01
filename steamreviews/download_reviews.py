@@ -197,7 +197,10 @@ def download_reviews_for_app_id_with_offset(app_id,
     return success_flag, downloaded_reviews, query_summary, query_count
 
 
-def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=None):
+def download_reviews_for_app_id(app_id,
+                                query_count=0,
+                                chosen_request_params=None,
+                                verbose=False):
     rate_limits = get_steam_api_rate_limits()
 
     request = dict(get_default_request_parameters(chosen_request_params))
@@ -243,6 +246,8 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
                 delta_checked_reviews = len(checked_reviews)
 
                 if delta_checked_reviews == 0:
+                    if verbose:
+                        print('Exiting the loop to query Steam API, because the timestamp threshold was reached.')
                     break
                 else:
                     downloaded_reviews = checked_reviews
@@ -253,11 +258,15 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
 
             # Detect full redundancy in the latest downloaded reviews
             if new_review_ids.issuperset(downloaded_review_ids):
+                if verbose:
+                    print('Exiting the loop to query Steam API, because this request only returned redundant reviews.')
                 break
             else:
                 new_review_ids = new_review_ids.union(downloaded_review_ids)
 
         else:
+            if verbose:
+                print('Exiting the loop to query Steam API, because this request failed.'.format)
             break
 
         if num_reviews is None:
@@ -274,6 +283,8 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
             query_count = 0
 
         if not previous_review_ids.isdisjoint(downloaded_review_ids):
+            if verbose:
+                print('Exiting the loop to query Steam API, because this request partially returned redundant reviews.')
             break
 
     for review in new_reviews:
@@ -287,8 +298,10 @@ def download_reviews_for_app_id(app_id, query_count=0, chosen_request_params=Non
     return review_dict, query_count
 
 
-def download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_app_ids=None,
-                                      chosen_request_params=None):
+def download_reviews_for_app_id_batch(input_app_ids=None,
+                                      previously_processed_app_ids=None,
+                                      chosen_request_params=None,
+                                      verbose=False):
     if input_app_ids is None:
         print('Loading {}'.format(get_input_app_ids_filename()))
         input_app_ids = [app_id for app_id in app_id_reader()]
@@ -308,7 +321,10 @@ def download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_a
         else:
             print('Downloading reviews for appID = {}'.format(app_id))
 
-        review_dict, query_count = download_reviews_for_app_id(app_id, query_count, chosen_request_params)
+        review_dict, query_count = download_reviews_for_app_id(app_id,
+                                                               query_count,
+                                                               chosen_request_params,
+                                                               verbose=verbose)
 
         game_count += 1
 
@@ -328,4 +344,6 @@ def download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_a
 
 if __name__ == '__main__':
     # noinspection PyTypeChecker
-    download_reviews_for_app_id_batch(input_app_ids=None, previously_processed_app_ids=None)
+    download_reviews_for_app_id_batch(input_app_ids=None,
+                                      previously_processed_app_ids=None,
+                                      verbose=False)
