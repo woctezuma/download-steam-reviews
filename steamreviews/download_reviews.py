@@ -210,6 +210,13 @@ def download_reviews_for_app_id(app_id,
         num_days = int(request['day_range'])
         date_threshold = current_date - datetime.timedelta(days=num_days)
         timestamp_threshold = datetime.datetime.timestamp(date_threshold)
+        if verbose:
+            if request['filter'] == 'updated':
+                collection_keyword = 'edited'
+            else:
+                collection_keyword = 'first posted'
+            print('Collecting reviews {} after {}'.format(collection_keyword,
+                                                          timestamp_threshold))
 
     review_dict = load_review_dict(app_id)
 
