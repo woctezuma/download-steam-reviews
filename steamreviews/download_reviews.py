@@ -273,7 +273,7 @@ def download_reviews_for_app_id(app_id,
 
         else:
             if verbose:
-                print('Exiting the loop to query Steam API, because this request failed.'.format)
+                print('Exiting the loop to query Steam API, because this request failed.')
             break
 
         if num_reviews is None:
