@@ -216,7 +216,7 @@ def download_reviews_for_app_id(app_id,
             else:
                 collection_keyword = 'first posted'
             print('Collecting reviews {} after {}'.format(collection_keyword,
-                                                          timestamp_threshold))
+                                                          date_threshold))
 
     review_dict = load_review_dict(app_id)
 
