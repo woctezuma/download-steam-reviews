@@ -155,12 +155,12 @@ def get_request(app_id, chosen_request_params=None):
 
 def download_reviews_for_app_id_with_offset(app_id,
                                             query_count,
-                                            offset='*',
+                                            cursor='*',
                                             chosen_request_params=None):
     rate_limits = get_steam_api_rate_limits()
 
     req_data = get_request(app_id, chosen_request_params)
-    req_data['cursor'] = str(offset)
+    req_data['cursor'] = str(cursor)
 
     resp_data = requests.get(get_steam_api_url() + req_data['appids'], params=req_data)
     status_code = resp_data.status_code
@@ -168,9 +168,9 @@ def download_reviews_for_app_id_with_offset(app_id,
 
     while (status_code == 502) and (query_count < rate_limits['max_num_queries']):
         cooldown_duration_for_bad_gateway = rate_limits['cooldown_bad_gateway']
-        print('{} Bad Gateway for appID = {} and offset = {}. Cooldown: {} seconds'.format(status_code,
+        print('{} Bad Gateway for appID = {} and cursor = {}. Cooldown: {} seconds'.format(status_code,
                                                                                            app_id,
-                                                                                           offset,
+                                                                                           cursor,
                                                                                            cooldown_duration_for_bad_gateway))
         time.sleep(cooldown_duration_for_bad_gateway)
 
@@ -182,7 +182,7 @@ def download_reviews_for_app_id_with_offset(app_id,
         result = resp_data.json()
     else:
         result = {'success': 0}
-        print('Faulty response status code = {} for appID = {} and offset = {}'.format(status_code, app_id, offset))
+        print('Faulty response status code = {} for appID = {} and cursor = {}'.format(status_code, app_id, cursor))
 
     success_flag = bool(result['success'] == 1)
 
