@@ -155,12 +155,12 @@ def get_request(app_id, chosen_request_params=None):
 
 def download_reviews_for_app_id_with_offset(app_id,
                                             query_count,
-                                            offset=0,
+                                            offset='*',
                                             chosen_request_params=None):
     rate_limits = get_steam_api_rate_limits()
 
     req_data = get_request(app_id, chosen_request_params)
-    req_data['start_offset'] = str(offset)
+    req_data['cursor'] = str(offset)
 
     resp_data = requests.get(get_steam_api_url() + req_data['appids'], params=req_data)
     status_code = resp_data.status_code
@@ -189,12 +189,14 @@ def download_reviews_for_app_id_with_offset(app_id,
     try:
         downloaded_reviews = result['reviews']
         query_summary = result['query_summary']
+        next_cursor = result['cursor']
     except KeyError:
         success_flag = False
         downloaded_reviews = []
         query_summary = get_dummy_query_summary()
+        next_cursor = ''
 
-    return success_flag, downloaded_reviews, query_summary, query_count
+    return success_flag, downloaded_reviews, query_summary, next_cursor, query_count
 
 
 def download_reviews_for_app_id(app_id,
@@ -225,18 +227,23 @@ def download_reviews_for_app_id(app_id,
     num_reviews = None
 
     offset = 0
+    cursors = ['*']  # for the first set: pass '*' ; for the next set: returned value of "cursor" in the response, etc.
     new_reviews = []
     new_review_ids = set()
 
     while (num_reviews is None) or (offset < num_reviews):
-        success_flag, downloaded_reviews, query_summary, query_count = download_reviews_for_app_id_with_offset(app_id,
-                                                                                                               query_count,
-                                                                                                               offset,
-                                                                                                               chosen_request_params)
+        current_cursor = cursors[-1]
+
+        success_flag, downloaded_reviews, query_summary, next_cursor, query_count = download_reviews_for_app_id_with_offset(
+            app_id,
+            query_count,
+            current_cursor,
+            chosen_request_params)
 
         delta_reviews = len(downloaded_reviews)
 
         offset += delta_reviews
+        cursors.append(next_cursor)
 
         if success_flag and delta_reviews > 0:
 
