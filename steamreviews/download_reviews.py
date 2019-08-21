@@ -227,26 +227,24 @@ def download_reviews_for_app_id(app_id,
     num_reviews = None
 
     offset = 0
-    cursors = ['*']  # for the first set: pass '*' ; for the next set: returned value of "cursor" in the response, etc.
+    cursor = '*'  # for the first set: pass '*' ; for the next set: returned value of "cursor" in the response, etc.
     new_reviews = []
     new_review_ids = set()
 
     while (num_reviews is None) or (offset < num_reviews):
-        current_cursor = cursors[-1]
 
         if verbose:
-            print('Cursor: {}'.format(current_cursor))
+            print('Cursor: {}'.format(cursor))
 
-        success_flag, downloaded_reviews, query_summary, query_count, next_cursor = download_reviews_for_app_id_with_offset(
+        success_flag, downloaded_reviews, query_summary, query_count, cursor = download_reviews_for_app_id_with_offset(
             app_id,
             query_count,
-            current_cursor,
+            cursor,
             chosen_request_params)
 
         delta_reviews = len(downloaded_reviews)
 
         offset += delta_reviews
-        cursors.append(next_cursor)
 
         if success_flag and delta_reviews > 0:
 
