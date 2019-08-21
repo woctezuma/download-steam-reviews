@@ -203,7 +203,7 @@ def download_reviews_for_app_id_with_offset(app_id,
 def download_reviews_for_app_id(app_id,
                                 query_count=0,
                                 chosen_request_params=None,
-                                start_cursor='*',  # this could useful to resume a failed download of older reviews
+                                start_cursor='*',  # this could be useful to resume a failed download of older reviews
                                 verbose=False):
     rate_limits = get_steam_api_rate_limits()
 
