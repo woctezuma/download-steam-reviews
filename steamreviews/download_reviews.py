@@ -303,6 +303,8 @@ def download_reviews_for_app_id(app_id,
                 print('Exiting the loop to query Steam API, because this request partially returned redundant reviews.')
             break
 
+    review_dict['cursor'] = cursor
+
     for review in new_reviews:
         review_id = review['recommendationid']
         if review_id not in previous_review_ids:
