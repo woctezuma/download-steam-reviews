@@ -195,7 +195,7 @@ def download_reviews_for_app_id_with_offset(app_id,
         success_flag = False
         downloaded_reviews = []
         query_summary = get_dummy_query_summary()
-        next_cursor = ''
+        next_cursor = cursor
 
     return success_flag, downloaded_reviews, query_summary, query_count, next_cursor
 
