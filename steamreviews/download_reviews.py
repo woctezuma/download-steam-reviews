@@ -142,6 +142,7 @@ def load_review_dict(app_id):
         review_dict = dict()
         review_dict['reviews'] = dict()
         review_dict['query_summary'] = get_dummy_query_summary()
+        review_dict['cursor'] = '*'
 
     return review_dict
 
