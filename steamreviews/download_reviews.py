@@ -234,6 +234,9 @@ def download_reviews_for_app_id(app_id,
     while (num_reviews is None) or (offset < num_reviews):
         current_cursor = cursors[-1]
 
+        if verbose:
+            print('Cursor: {}'.format(current_cursor))
+
         success_flag, downloaded_reviews, query_summary, next_cursor, query_count = download_reviews_for_app_id_with_offset(
             app_id,
             query_count,
