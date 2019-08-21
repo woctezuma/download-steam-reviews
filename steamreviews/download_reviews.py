@@ -196,7 +196,7 @@ def download_reviews_for_app_id_with_offset(app_id,
         query_summary = get_dummy_query_summary()
         next_cursor = ''
 
-    return success_flag, downloaded_reviews, query_summary, next_cursor, query_count
+    return success_flag, downloaded_reviews, query_summary, query_count, next_cursor
 
 
 def download_reviews_for_app_id(app_id,
@@ -237,7 +237,7 @@ def download_reviews_for_app_id(app_id,
         if verbose:
             print('Cursor: {}'.format(current_cursor))
 
-        success_flag, downloaded_reviews, query_summary, next_cursor, query_count = download_reviews_for_app_id_with_offset(
+        success_flag, downloaded_reviews, query_summary, query_count, next_cursor = download_reviews_for_app_id_with_offset(
             app_id,
             query_count,
             current_cursor,
