@@ -138,11 +138,15 @@ def load_review_dict(app_id):
     try:
         with open(review_data_filename, 'r', encoding='utf8') as in_json_file:
             review_dict = json.load(in_json_file)
+
+        # Compatibility with data downloaded with previous versions of steamreviews:
+        if 'cursors' not in review_dict.keys():
+            review_dict['cursors'] = dict()
     except FileNotFoundError:
         review_dict = dict()
         review_dict['reviews'] = dict()
         review_dict['query_summary'] = get_dummy_query_summary()
-        review_dict['cursor'] = '*'
+        review_dict['cursors'] = dict()
 
     return review_dict
 
@@ -304,7 +308,8 @@ def download_reviews_for_app_id(app_id,
                 print('Exiting the loop to query Steam API, because this request partially returned redundant reviews.')
             break
 
-    review_dict['cursor'] = cursor
+    # Keep track of the date (in string format) associated with the cursor at save time.
+    review_dict['cursors'][str(cursor)] = time.asctime()
 
     for review in new_reviews:
         review_id = review['recommendationid']
