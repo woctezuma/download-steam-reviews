@@ -4,7 +4,6 @@ import steamreviews
 
 
 class TestSteamReviewsMethods(unittest.TestCase):
-
     def test_load_review_dict(self):
         app_id = 329070
         review_dict = steamreviews.load_review_dict(app_id)
@@ -24,21 +23,21 @@ class TestSteamReviewsMethods(unittest.TestCase):
     def test_download_reviews_with_recent_filter_and_day_range(self):
         app_id = 239350
         request_params = dict()
-        request_params['filter'] = 'recent'
-        request_params['day_range'] = '3'
-        _, query_count = steamreviews.download_reviews_for_app_id(app_id,
-                                                                  chosen_request_params=request_params,
-                                                                  verbose=True)
+        request_params["filter"] = "recent"
+        request_params["day_range"] = "3"
+        _, query_count = steamreviews.download_reviews_for_app_id(
+            app_id, chosen_request_params=request_params, verbose=True
+        )
         self.assertGreater(query_count, 0)
 
     def test_download_reviews_with_updated_filter_and_day_range(self):
         app_id = 239350
         request_params = dict()
-        request_params['filter'] = 'updated'
-        request_params['day_range'] = '3'
-        _, query_count = steamreviews.download_reviews_for_app_id(app_id,
-                                                                  chosen_request_params=request_params,
-                                                                  verbose=True)
+        request_params["filter"] = "updated"
+        request_params["day_range"] = "3"
+        _, query_count = steamreviews.download_reviews_for_app_id(
+            app_id, chosen_request_params=request_params, verbose=True
+        )
         self.assertGreater(query_count, 0)
 
 

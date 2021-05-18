@@ -158,10 +158,9 @@ def get_request(app_id, chosen_request_params=None):
     return request
 
 
-def download_reviews_for_app_id_with_offset(app_id,
-                                            query_count,
-                                            cursor='*',
-                                            chosen_request_params=None):
+def download_reviews_for_app_id_with_offset(
+    app_id, query_count, cursor="*", chosen_request_params=None
+):
     rate_limits = get_steam_api_rate_limits()
 
     req_data = get_request(app_id, chosen_request_params)
@@ -171,23 +170,30 @@ def download_reviews_for_app_id_with_offset(app_id,
     status_code = resp_data.status_code
     query_count += 1
 
-    while (status_code == 502) and (query_count < rate_limits['max_num_queries']):
-        cooldown_duration_for_bad_gateway = rate_limits['cooldown_bad_gateway']
-        print('{} Bad Gateway for appID = {} and cursor = {}. Cooldown: {} seconds'.format(status_code,
-                                                                                           app_id,
-                                                                                           cursor,
-                                                                                           cooldown_duration_for_bad_gateway))
+    while (status_code == 502) and (query_count < rate_limits["max_num_queries"]):
+        cooldown_duration_for_bad_gateway = rate_limits["cooldown_bad_gateway"]
+        print(
+            "{} Bad Gateway for appID = {} and cursor = {}. Cooldown: {} seconds".format(
+                status_code, app_id, cursor, cooldown_duration_for_bad_gateway
+            )
+        )
         time.sleep(cooldown_duration_for_bad_gateway)
 
-        resp_data = requests.get(get_steam_api_url() + req_data['appids'], params=req_data)
+        resp_data = requests.get(
+            get_steam_api_url() + req_data["appids"], params=req_data
+        )
         status_code = resp_data.status_code
         query_count += 1
 
     if status_code == 200:
         result = resp_data.json()
     else:
-        result = {'success': 0}
-        print('Faulty response status code = {} for appID = {} and cursor = {}'.format(status_code, app_id, cursor))
+        result = {"success": 0}
+        print(
+            "Faulty response status code = {} for appID = {} and cursor = {}".format(
+                status_code, app_id, cursor
+            )
+        )
 
     success_flag = bool(result["success"] == 1)
 
@@ -204,15 +210,19 @@ def download_reviews_for_app_id_with_offset(app_id,
     return success_flag, downloaded_reviews, query_summary, query_count, next_cursor
 
 
-def download_reviews_for_app_id(app_id,
-                                query_count=0,
-                                chosen_request_params=None,
-                                start_cursor='*',  # this could be useful to resume a failed download of older reviews
-                                verbose=False):
+def download_reviews_for_app_id(
+    app_id,
+    query_count=0,
+    chosen_request_params=None,
+    start_cursor="*",  # this could be useful to resume a failed download of older reviews
+    verbose=False,
+):
     rate_limits = get_steam_api_rate_limits()
 
     request = dict(get_default_request_parameters(chosen_request_params))
-    check_review_timestamp = bool('day_range' in request.keys() and request['filter'] != 'all')
+    check_review_timestamp = bool(
+        "day_range" in request.keys() and request["filter"] != "all"
+    )
     if check_review_timestamp:
         current_date = datetime.datetime.now()
         num_days = int(request["day_range"])
@@ -222,9 +232,12 @@ def download_reviews_for_app_id(app_id,
             if request["filter"] == "updated":
                 collection_keyword = "edited"
             else:
-                collection_keyword = 'first posted'
-            print('Collecting reviews {} after {}'.format(collection_keyword,
-                                                          date_threshold))
+                collection_keyword = "first posted"
+            print(
+                "Collecting reviews {} after {}".format(
+                    collection_keyword, date_threshold
+                )
+            )
 
     review_dict = load_review_dict(app_id)
 
@@ -242,11 +255,15 @@ def download_reviews_for_app_id(app_id,
         if verbose:
             print("Cursor: {}".format(cursor))
 
-        success_flag, downloaded_reviews, query_summary, query_count, cursor = download_reviews_for_app_id_with_offset(
-            app_id,
+        (
+            success_flag,
+            downloaded_reviews,
+            query_summary,
             query_count,
             cursor,
-            chosen_request_params)
+        ) = download_reviews_for_app_id_with_offset(
+            app_id, query_count, cursor, chosen_request_params
+        )
 
         delta_reviews = len(downloaded_reviews)
 
@@ -261,33 +278,45 @@ def download_reviews_for_app_id(app_id,
                 else:
                     timestamp_str_field = "timestamp_created"
 
-                checked_reviews = list(filter(lambda x: x[timestamp_str_field] > timestamp_threshold,
-                                              downloaded_reviews))
+                checked_reviews = list(
+                    filter(
+                        lambda x: x[timestamp_str_field] > timestamp_threshold,
+                        downloaded_reviews,
+                    )
+                )
 
                 delta_checked_reviews = len(checked_reviews)
 
                 if delta_checked_reviews == 0:
                     if verbose:
-                        print('Exiting the loop to query Steam API, because the timestamp threshold was reached.')
+                        print(
+                            "Exiting the loop to query Steam API, because the timestamp threshold was reached."
+                        )
                     break
                 else:
                     downloaded_reviews = checked_reviews
 
             new_reviews.extend(downloaded_reviews)
 
-            downloaded_review_ids = [review['recommendationid'] for review in downloaded_reviews]
+            downloaded_review_ids = [
+                review["recommendationid"] for review in downloaded_reviews
+            ]
 
             # Detect full redundancy in the latest downloaded reviews
             if new_review_ids.issuperset(downloaded_review_ids):
                 if verbose:
-                    print('Exiting the loop to query Steam API, because this request only returned redundant reviews.')
+                    print(
+                        "Exiting the loop to query Steam API, because this request only returned redundant reviews."
+                    )
                 break
             else:
                 new_review_ids = new_review_ids.union(downloaded_review_ids)
 
         else:
             if verbose:
-                print('Exiting the loop to query Steam API, because this request failed.')
+                print(
+                    "Exiting the loop to query Steam API, because this request failed."
+                )
             break
 
         if num_reviews is None:
@@ -297,15 +326,21 @@ def download_reviews_for_app_id(app_id,
             # Also rely on num_reviews for display:
             print("[appID = {}] expected #reviews = {}".format(app_id, num_reviews))
 
-        if query_count >= rate_limits['max_num_queries']:
-            cooldown_duration = rate_limits['cooldown']
-            print('Number of queries {} reached. Cooldown: {} seconds'.format(query_count, cooldown_duration))
+        if query_count >= rate_limits["max_num_queries"]:
+            cooldown_duration = rate_limits["cooldown"]
+            print(
+                "Number of queries {} reached. Cooldown: {} seconds".format(
+                    query_count, cooldown_duration
+                )
+            )
             time.sleep(cooldown_duration)
             query_count = 0
 
         if not previous_review_ids.isdisjoint(downloaded_review_ids):
             if verbose:
-                print('Exiting the loop to query Steam API, because this request partially returned redundant reviews.')
+                print(
+                    "Exiting the loop to query Steam API, because this request partially returned redundant reviews."
+                )
             break
 
     # Keep track of the date (in string format) associated with the cursor at save time.
@@ -322,10 +357,12 @@ def download_reviews_for_app_id(app_id,
     return review_dict, query_count
 
 
-def download_reviews_for_app_id_batch(input_app_ids=None,
-                                      previously_processed_app_ids=None,
-                                      chosen_request_params=None,
-                                      verbose=False):
+def download_reviews_for_app_id_batch(
+    input_app_ids=None,
+    previously_processed_app_ids=None,
+    chosen_request_params=None,
+    verbose=False,
+):
     if input_app_ids is None:
         print("Loading {}".format(get_input_app_ids_filename()))
         input_app_ids = [app_id for app_id in app_id_reader()]
@@ -345,21 +382,22 @@ def download_reviews_for_app_id_batch(input_app_ids=None,
         else:
             print("Downloading reviews for appID = {}".format(app_id))
 
-        review_dict, query_count = download_reviews_for_app_id(app_id,
-                                                               query_count,
-                                                               chosen_request_params,
-                                                               verbose=verbose)
+        review_dict, query_count = download_reviews_for_app_id(
+            app_id, query_count, chosen_request_params, verbose=verbose
+        )
 
         game_count += 1
 
         with open(get_processed_app_ids_filename(), "a") as f:
             f.write(str(app_id) + "\n")
 
-        num_downloaded_reviews = len(review_dict['reviews'])
-        num_expected_reviews = review_dict['query_summary']['total_reviews']
-        print('[appID = {}] num_reviews = {} (expected: {})'.format(app_id,
-                                                                    num_downloaded_reviews,
-                                                                    num_expected_reviews))
+        num_downloaded_reviews = len(review_dict["reviews"])
+        num_expected_reviews = review_dict["query_summary"]["total_reviews"]
+        print(
+            "[appID = {}] num_reviews = {} (expected: {})".format(
+                app_id, num_downloaded_reviews, num_expected_reviews
+            )
+        )
 
     print("Game records written: {}".format(game_count))
 
@@ -368,6 +406,6 @@ def download_reviews_for_app_id_batch(input_app_ids=None,
 
 if __name__ == "__main__":
     # noinspection PyTypeChecker
-    download_reviews_for_app_id_batch(input_app_ids=None,
-                                      previously_processed_app_ids=None,
-                                      verbose=False)
+    download_reviews_for_app_id_batch(
+        input_app_ids=None, previously_processed_app_ids=None, verbose=False
+    )
