@@ -71,6 +71,10 @@ review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id)
 so make sure that you start the download from scratch (instead of updating existing JSON review data)
 if you ever decide to **change** them, e.g the value of the `review_type` (set to `all`, `positive` or `negative`).
 
+**Caveat²**: if `review_type` is set to `positive` (or `negative`), then the value of `total_reviews` can be misleading.
+It is indeed arbitrarily set to `total_positive` (respectively `total_negative`).
+In this case, if you need the total number of reviews, compute it as the sum of `total_positive` and `total_negative`.
+
 ```python
 import steamreviews
 
