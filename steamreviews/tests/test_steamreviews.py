@@ -14,6 +14,33 @@ class TestSteamReviewsMethods(unittest.TestCase):
         _, query_count = steamreviews.download_reviews_for_app_id(app_id, verbose=True)
         self.assertGreater(query_count, 0)
 
+    def test_download_reviews_filtered_by_language(self):
+        app_id = 573170
+        request_params = dict()
+        request_params["language"] = "english"
+        _, query_count = steamreviews.download_reviews_for_app_id(
+            app_id, chosen_request_params=request_params, verbose=True
+        )
+        self.assertGreater(query_count, 0)
+
+    def test_download_reviews_filtered_by_review_type(self):
+        app_id = 573170
+        request_params = dict()
+        request_params["review_type"] = "positive"
+        _, query_count = steamreviews.download_reviews_for_app_id(
+            app_id, chosen_request_params=request_params, verbose=True
+        )
+        self.assertGreater(query_count, 0)
+
+    def test_download_reviews_filtered_by_purchase_type(self):
+        app_id = 573170
+        request_params = dict()
+        request_params["purchase_type"] = "steam"
+        _, query_count = steamreviews.download_reviews_for_app_id(
+            app_id, chosen_request_params=request_params, verbose=True
+        )
+        self.assertGreater(query_count, 0)
+
     def test_download_reviews(self):
         app_ids = [329070, 573170]
         steamreviews.download_reviews_for_app_id_batch(app_ids, verbose=True)
