@@ -67,6 +67,10 @@ review_dict, query_count = steamreviews.download_reviews_for_app_id(app_id)
 
 ### Download reviews for one appID, with specific request parameters (language, sentiment, store)
 
+**Caveat**: the `review_type` (set to `all`, `positive` or `negative`) does not appear in the output filename,
+so make sure that you start the download from scratch (instead of updating existing JSON review data)
+if you ever decide to **change** the value of the `review_type`.
+
 ```python
 import steamreviews
 
