@@ -10,6 +10,7 @@
 # Reference:
 #   https://raw.githubusercontent.com/CraigKelly/steam-data/master/data/games.py
 
+import copy
 import datetime
 import json
 import pathlib
@@ -174,7 +175,9 @@ def download_the_full_query_summary(
         original_review_type = None
 
     # Override the filtering by review type:
-    chosen_request_params["review_type"] = get_default_review_type()
+    # Reference: https://stackoverflow.com/a/5105554/
+    overriden_params = copy.deepcopy(chosen_request_params)
+    overriden_params["review_type"] = get_default_review_type()
     # Otherwise, the query summary would miss the fields:
     # - 'total_positive' (total number of positive reviews),
     # - 'total_negative' (total number of negative reviews),
@@ -188,7 +191,7 @@ def download_the_full_query_summary(
         query_count,
         next_cursor,
     ) = download_reviews_for_app_id_with_offset(
-        app_id, query_count, chosen_request_params=chosen_request_params
+        app_id, query_count, chosen_request_params=overriden_params
     )
 
     if (
