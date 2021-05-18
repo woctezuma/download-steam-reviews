@@ -68,6 +68,13 @@ def get_processed_app_ids():
     return all_app_ids
 
 
+def get_default_review_type():
+    # Reference: https://partner.steamgames.com/doc/store/getreviews
+    default_review_type = "all"
+
+    return default_review_type
+
+
 def get_default_request_parameters(chosen_request_params=None):
     # Objective: return a dict of default paramters for a request to Steam API.
     #
@@ -156,6 +163,45 @@ def get_request(app_id, chosen_request_params=None):
     request["appids"] = str(app_id)
 
     return request
+
+
+def download_the_full_query_summary(
+    app_id, query_count, chosen_request_params, override_total_reviews=True
+):
+    try:
+        original_review_type = chosen_request_params["review_type"]
+    except KeyError:
+        original_review_type = None
+
+    # Override the filtering by review type:
+    chosen_request_params["review_type"] = get_default_review_type()
+    # Otherwise, the query summary would miss the fields:
+    # - 'total_positive' (total number of positive reviews),
+    # - 'total_negative' (total number of negative reviews),
+    # - 'total_reviews' (total number of reviews),
+    # and query summary would only contain the field 'num_reviews' (number of reviews downloaded with the GET request).
+
+    (
+        success_flag,
+        downloaded_reviews,
+        query_summary,
+        query_count,
+        next_cursor,
+    ) = download_reviews_for_app_id_with_offset(
+        app_id, query_count, chosen_request_params=chosen_request_params
+    )
+
+    if (
+        override_total_reviews
+        and original_review_type is not None
+        and original_review_type != get_default_review_type()
+    ):
+        # Either 'total_positive' or 'total_negative'
+        total_str = "total_" + original_review_type
+        # Override the total number of reviews with the total number of reviews of the chosen type:
+        query_summary["total_reviews"] = query_summary[total_str]
+
+    return success_flag, query_summary, query_count
 
 
 def download_reviews_for_app_id_with_offset(
@@ -320,6 +366,15 @@ def download_reviews_for_app_id(
             break
 
         if num_reviews is None:
+            if "total_reviews" not in query_summary:
+                (
+                    success_flag,
+                    query_summary,
+                    query_count,
+                ) = download_the_full_query_summary(
+                    app_id, query_count, chosen_request_params
+                )
+
             review_dict["query_summary"] = query_summary
             # Initialize num_reviews with the correct value (this is crucial for the loop, do not change variable name):
             num_reviews = query_summary["total_reviews"]
