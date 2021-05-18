@@ -41,10 +41,19 @@ class TestSteamReviewsMethods(unittest.TestCase):
         )
         self.assertGreater(query_count, 0)
 
-    def test_download_reviews_filtered_by_purchase_type(self):
+    def test_download_reviews_filtered_by_steam_purchase_type(self):
         app_id = 573170
         request_params = dict()
         request_params["purchase_type"] = "steam"
+        _, query_count = steamreviews.download_reviews_for_app_id(
+            app_id, chosen_request_params=request_params, verbose=True
+        )
+        self.assertGreater(query_count, 0)
+
+    def test_download_reviews_filtered_by_non_steam_purchase_type(self):
+        app_id = 573170
+        request_params = dict()
+        request_params["purchase_type"] = "non_steam_purchase"
         _, query_count = steamreviews.download_reviews_for_app_id(
             app_id, chosen_request_params=request_params, verbose=True
         )
