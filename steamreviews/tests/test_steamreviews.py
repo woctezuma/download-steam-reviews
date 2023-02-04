@@ -19,7 +19,9 @@ class TestSteamReviewsMethods(unittest.TestCase):
         request_params = dict()
         request_params["language"] = "english"
         _, query_count = steamreviews.download_reviews_for_app_id(
-            app_id, chosen_request_params=request_params, verbose=True
+            app_id,
+            chosen_request_params=request_params,
+            verbose=True,
         )
         self.assertGreater(query_count, 0)
 
@@ -28,7 +30,9 @@ class TestSteamReviewsMethods(unittest.TestCase):
         request_params = dict()
         request_params["review_type"] = "positive"
         _, query_count = steamreviews.download_reviews_for_app_id(
-            app_id, chosen_request_params=request_params, verbose=True
+            app_id,
+            chosen_request_params=request_params,
+            verbose=True,
         )
         self.assertGreater(query_count, 0)
 
@@ -37,7 +41,9 @@ class TestSteamReviewsMethods(unittest.TestCase):
         request_params = dict()
         request_params["review_type"] = "negative"
         _, query_count = steamreviews.download_reviews_for_app_id(
-            app_id, chosen_request_params=request_params, verbose=True
+            app_id,
+            chosen_request_params=request_params,
+            verbose=True,
         )
         self.assertGreater(query_count, 0)
 
@@ -46,7 +52,9 @@ class TestSteamReviewsMethods(unittest.TestCase):
         request_params = dict()
         request_params["purchase_type"] = "steam"
         _, query_count = steamreviews.download_reviews_for_app_id(
-            app_id, chosen_request_params=request_params, verbose=True
+            app_id,
+            chosen_request_params=request_params,
+            verbose=True,
         )
         self.assertGreater(query_count, 0)
 
@@ -55,7 +63,9 @@ class TestSteamReviewsMethods(unittest.TestCase):
         request_params = dict()
         request_params["purchase_type"] = "non_steam_purchase"
         _, query_count = steamreviews.download_reviews_for_app_id(
-            app_id, chosen_request_params=request_params, verbose=True
+            app_id,
+            chosen_request_params=request_params,
+            verbose=True,
         )
         self.assertGreater(query_count, 0)
 
@@ -71,7 +81,9 @@ class TestSteamReviewsMethods(unittest.TestCase):
         request_params["filter"] = "recent"
         request_params["day_range"] = "3"
         _, query_count = steamreviews.download_reviews_for_app_id(
-            app_id, chosen_request_params=request_params, verbose=True
+            app_id,
+            chosen_request_params=request_params,
+            verbose=True,
         )
         self.assertGreater(query_count, 0)
 
@@ -81,7 +93,9 @@ class TestSteamReviewsMethods(unittest.TestCase):
         request_params["filter"] = "updated"
         request_params["day_range"] = "3"
         _, query_count = steamreviews.download_reviews_for_app_id(
-            app_id, chosen_request_params=request_params, verbose=True
+            app_id,
+            chosen_request_params=request_params,
+            verbose=True,
         )
         self.assertGreater(query_count, 0)
 
