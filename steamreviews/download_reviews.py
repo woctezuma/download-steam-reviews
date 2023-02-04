@@ -358,8 +358,8 @@ def download_reviews_for_app_id(
                             "Exiting the loop to query Steam API, because the timestamp threshold was reached.",
                         )
                     break
-                else:
-                    downloaded_reviews = checked_reviews
+
+                downloaded_reviews = checked_reviews
 
             new_reviews.extend(downloaded_reviews)
 
@@ -374,8 +374,8 @@ def download_reviews_for_app_id(
                         "Exiting the loop to query Steam API, because this request only returned redundant reviews.",
                     )
                 break
-            else:
-                new_review_ids = new_review_ids.union(downloaded_review_ids)
+
+            new_review_ids = new_review_ids.union(downloaded_review_ids)
 
         else:
             if verbose:
