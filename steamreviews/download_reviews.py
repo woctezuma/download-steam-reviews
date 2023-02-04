@@ -15,6 +15,7 @@ import datetime
 import json
 import pathlib
 import time
+from pathlib import Path
 
 import requests
 
@@ -38,7 +39,7 @@ def app_id_reader(filename=None):
     if filename is None:
         filename = get_input_app_ids_filename()
 
-    with open(filename) as f:
+    with Path(filename).open() as f:
         for row in f.readlines():
             yield parse_app_id(row)
 
@@ -144,7 +145,7 @@ def load_review_dict(app_id):
     review_data_filename = get_output_filename(app_id)
 
     try:
-        with open(review_data_filename, encoding="utf8") as in_json_file:
+        with Path(review_data_filename).open(encoding="utf8") as in_json_file:
             review_dict = json.load(in_json_file)
 
         # Compatibility with data downloaded with previous versions of steamreviews:
@@ -427,7 +428,7 @@ def download_reviews_for_app_id(
         if review_id not in previous_review_ids:
             review_dict["reviews"][review_id] = review
 
-    with open(get_output_filename(app_id), "w") as f:
+    with Path(get_output_filename(app_id)).open("w") as f:
         f.write(json.dumps(review_dict) + "\n")
 
     return review_dict, query_count
@@ -466,7 +467,7 @@ def download_reviews_for_app_id_batch(
 
         game_count += 1
 
-        with open(get_processed_app_ids_filename(), "a") as f:
+        with Path(get_processed_app_ids_filename()).open("a") as f:
             f.write(str(app_id) + "\n")
 
         num_downloaded_reviews = len(review_dict["reviews"])
