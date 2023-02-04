@@ -15,6 +15,7 @@ import datetime
 import json
 import pathlib
 import time
+from http import HTTPStatus
 from pathlib import Path
 
 import requests
@@ -228,7 +229,9 @@ def download_reviews_for_app_id_with_offset(
     status_code = resp_data.status_code
     query_count += 1
 
-    while (status_code == 502) and (query_count < rate_limits["max_num_queries"]):
+    while (status_code == HTTPStatus.BAD_GATEWAY) and (
+        query_count < rate_limits["max_num_queries"]
+    ):
         cooldown_duration_for_bad_gateway = rate_limits["cooldown_bad_gateway"]
         print(
             "{} Bad Gateway for appID = {} and cursor = {}. Cooldown: {} seconds".format(
@@ -247,7 +250,7 @@ def download_reviews_for_app_id_with_offset(
         status_code = resp_data.status_code
         query_count += 1
 
-    if status_code == 200:
+    if status_code == HTTPStatus.OK:
         result = resp_data.json()
     else:
         result = {"success": 0}
