@@ -38,7 +38,7 @@ def app_id_reader(filename=None):
     if filename is None:
         filename = get_input_app_ids_filename()
 
-    with open(filename, "r") as f:
+    with open(filename) as f:
         for row in f.readlines():
             yield parse_app_id(row)
 
@@ -134,7 +134,7 @@ def get_output_filename(app_id):
 
 
 def get_dummy_query_summary():
-    query_summary = dict()
+    query_summary = {}
     query_summary["total_reviews"] = -1
 
     return query_summary
@@ -144,17 +144,17 @@ def load_review_dict(app_id):
     review_data_filename = get_output_filename(app_id)
 
     try:
-        with open(review_data_filename, "r", encoding="utf8") as in_json_file:
+        with open(review_data_filename, encoding="utf8") as in_json_file:
             review_dict = json.load(in_json_file)
 
         # Compatibility with data downloaded with previous versions of steamreviews:
         if "cursors" not in review_dict.keys():
-            review_dict["cursors"] = dict()
+            review_dict["cursors"] = {}
     except FileNotFoundError:
-        review_dict = dict()
-        review_dict["reviews"] = dict()
+        review_dict = {}
+        review_dict["reviews"] = {}
         review_dict["query_summary"] = get_dummy_query_summary()
-        review_dict["cursors"] = dict()
+        review_dict["cursors"] = {}
 
     return review_dict
 
@@ -284,7 +284,7 @@ def download_reviews_for_app_id(
 
     request = dict(get_default_request_parameters(chosen_request_params))
     check_review_timestamp = bool(
-        "day_range" in request.keys() and request["filter"] != "all",
+        "day_range" in request and request["filter"] != "all",
     )
     if check_review_timestamp:
         current_date = datetime.datetime.now()
@@ -316,7 +316,7 @@ def download_reviews_for_app_id(
 
     while (num_reviews is None) or (offset < num_reviews):
         if verbose:
-            print("Cursor: {}".format(cursor))
+            print(f"Cursor: {cursor}")
 
         (
             success_flag,
@@ -399,7 +399,7 @@ def download_reviews_for_app_id(
             # Initialize num_reviews with the correct value (this is crucial for the loop, do not change variable name):
             num_reviews = query_summary["total_reviews"]
             # Also rely on num_reviews for display:
-            print("[appID = {}] expected #reviews = {}".format(app_id, num_reviews))
+            print(f"[appID = {app_id}] expected #reviews = {num_reviews}")
 
         if query_count >= rate_limits["max_num_queries"]:
             cooldown_duration = rate_limits["cooldown"]
@@ -440,11 +440,11 @@ def download_reviews_for_app_id_batch(
     verbose=False,
 ):
     if input_app_ids is None:
-        print("Loading {}".format(get_input_app_ids_filename()))
-        input_app_ids = [app_id for app_id in app_id_reader()]
+        print(f"Loading {get_input_app_ids_filename()}")
+        input_app_ids = list(app_id_reader())
 
     if previously_processed_app_ids is None:
-        print("Loading {}".format(get_processed_app_ids_filename()))
+        print(f"Loading {get_processed_app_ids_filename()}")
         previously_processed_app_ids = get_processed_app_ids()
 
     query_count = 0
@@ -452,10 +452,10 @@ def download_reviews_for_app_id_batch(
 
     for app_id in input_app_ids:
         if app_id in previously_processed_app_ids:
-            print("Skipping previously found appID = {}".format(app_id))
+            print(f"Skipping previously found appID = {app_id}")
             continue
         else:
-            print("Downloading reviews for appID = {}".format(app_id))
+            print(f"Downloading reviews for appID = {app_id}")
 
         review_dict, query_count = download_reviews_for_app_id(
             app_id,
@@ -479,7 +479,7 @@ def download_reviews_for_app_id_batch(
             ),
         )
 
-    print("Game records written: {}".format(game_count))
+    print(f"Game records written: {game_count}")
 
     return True
 

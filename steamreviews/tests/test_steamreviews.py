@@ -16,7 +16,7 @@ class TestSteamReviewsMethods(unittest.TestCase):
 
     def test_download_reviews_filtered_by_language(self):
         app_id = 573170
-        request_params = dict()
+        request_params = {}
         request_params["language"] = "english"
         _, query_count = steamreviews.download_reviews_for_app_id(
             app_id,
@@ -27,7 +27,7 @@ class TestSteamReviewsMethods(unittest.TestCase):
 
     def test_download_reviews_filtered_by_positive_review_type(self):
         app_id = 573170
-        request_params = dict()
+        request_params = {}
         request_params["review_type"] = "positive"
         _, query_count = steamreviews.download_reviews_for_app_id(
             app_id,
@@ -38,7 +38,7 @@ class TestSteamReviewsMethods(unittest.TestCase):
 
     def test_download_reviews_filtered_by_negative_review_type(self):
         app_id = 573170
-        request_params = dict()
+        request_params = {}
         request_params["review_type"] = "negative"
         _, query_count = steamreviews.download_reviews_for_app_id(
             app_id,
@@ -49,7 +49,7 @@ class TestSteamReviewsMethods(unittest.TestCase):
 
     def test_download_reviews_filtered_by_steam_purchase_type(self):
         app_id = 573170
-        request_params = dict()
+        request_params = {}
         request_params["purchase_type"] = "steam"
         _, query_count = steamreviews.download_reviews_for_app_id(
             app_id,
@@ -60,7 +60,7 @@ class TestSteamReviewsMethods(unittest.TestCase):
 
     def test_download_reviews_filtered_by_non_steam_purchase_type(self):
         app_id = 573170
-        request_params = dict()
+        request_params = {}
         request_params["purchase_type"] = "non_steam_purchase"
         _, query_count = steamreviews.download_reviews_for_app_id(
             app_id,
@@ -77,7 +77,7 @@ class TestSteamReviewsMethods(unittest.TestCase):
 
     def test_download_reviews_with_recent_filter_and_day_range(self):
         app_id = 239350
-        request_params = dict()
+        request_params = {}
         request_params["filter"] = "recent"
         request_params["day_range"] = "3"
         _, query_count = steamreviews.download_reviews_for_app_id(
@@ -89,7 +89,7 @@ class TestSteamReviewsMethods(unittest.TestCase):
 
     def test_download_reviews_with_updated_filter_and_day_range(self):
         app_id = 239350
-        request_params = dict()
+        request_params = {}
         request_params["filter"] = "updated"
         request_params["day_range"] = "3"
         _, query_count = steamreviews.download_reviews_for_app_id(
