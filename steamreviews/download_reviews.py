@@ -455,8 +455,8 @@ def download_reviews_for_app_id_batch(
         if app_id in previously_processed_app_ids:
             print(f"Skipping previously found appID = {app_id}")
             continue
-        else:
-            print(f"Downloading reviews for appID = {app_id}")
+
+        print(f"Downloading reviews for appID = {app_id}")
 
         review_dict, query_count = download_reviews_for_app_id(
             app_id,
