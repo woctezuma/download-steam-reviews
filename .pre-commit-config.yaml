@@ -1,0 +1,31 @@
+files: \.(py)$
+default_stages: [commit, manual]
+repos:
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.6
+    hooks:
+    - id: ruff
+      args: [
+      --fix,
+      --unsafe-fixes,
+      --target-version, "py312",
+      --select, "ALL",
+      --ignore, "ANN,C90,D,E501,F401,FBT,PLR091,S101,S113,T20"
+      ]
+    - id: ruff-format
+
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.7.0
+    hooks:
+    - id: mypy
+      additional_dependencies: [types-requests]
+      stages: [manual]
+
+-   repo: https://github.com/dosisod/refurb
+    rev: v1.24.0
+    hooks:
+    - id: refurb
+      args: [--python-version, "3.12"]
+      stages: [manual]
+
