@@ -29,7 +29,7 @@ def parse_app_id(app_id):
         return None
 
 
-def get_input_app_ids_filename():
+def get_input_app_ids_filename() -> str:
     # Objective: return the filename where input app_ids are stored.
     return "idlist.txt"
 
@@ -51,9 +51,7 @@ def get_processed_app_ids_filename(filename_root="idprocessed"):
     # Get current day as yyyymmdd format
     current_date = time.strftime("%Y%m%d")
 
-    processed_app_ids_filename = filename_root + "_on_" + current_date + ".txt"
-
-    return processed_app_ids_filename
+    return filename_root + "_on_" + current_date + ".txt"
 
 
 def get_processed_app_ids():
@@ -71,11 +69,9 @@ def get_processed_app_ids():
     return all_app_ids
 
 
-def get_default_review_type():
+def get_default_review_type() -> str:
     # Reference: https://partner.steamgames.com/doc/store/getreviews
-    default_review_type = "all"
-
-    return default_review_type
+    return "all"
 
 
 def get_default_request_parameters(chosen_request_params=None):
@@ -113,7 +109,7 @@ def get_data_path():
     return data_path
 
 
-def get_steam_api_url():
+def get_steam_api_url() -> str:
     # Objective: return the url of Steam API for reviews.
 
     return "https://store.steampowered.com/appreviews/"
@@ -122,13 +118,11 @@ def get_steam_api_url():
 def get_steam_api_rate_limits():
     # Objective: return the rate limits of Steam API for reviews.
 
-    rate_limits = {
+    return {
         "max_num_queries": 150,
         "cooldown": (5 * 60) + 10,  # 5 minutes plus a cushion
         "cooldown_bad_gateway": 10,  # arbitrary value to tackle 502 Bad Gateway due to saturated servers (during sales)
     }
-
-    return rate_limits
 
 
 def get_output_filename(app_id):
@@ -150,7 +144,7 @@ def load_review_dict(app_id):
             review_dict = json.load(in_json_file)
 
         # Compatibility with data downloaded with previous versions of steamreviews:
-        if "cursors" not in review_dict.keys():
+        if "cursors" not in review_dict:
             review_dict["cursors"] = {}
     except FileNotFoundError:
         review_dict = {}
@@ -291,7 +285,7 @@ def download_reviews_for_app_id(
         "day_range" in request and request["filter"] != "all",
     )
     if check_review_timestamp:
-        current_date = datetime.datetime.now()
+        current_date = datetime.datetime.now(tz=datetime.UTC)
         num_days = int(request["day_range"])
         date_threshold = current_date - datetime.timedelta(days=num_days)
         timestamp_threshold = datetime.datetime.timestamp(date_threshold)
@@ -301,10 +295,7 @@ def download_reviews_for_app_id(
             else:
                 collection_keyword = "first posted"
             print(
-                "Collecting reviews {} after {}".format(
-                    collection_keyword,
-                    date_threshold,
-                ),
+                f"Collecting reviews {collection_keyword} after {date_threshold}",
             )
 
     review_dict = load_review_dict(app_id)
@@ -442,7 +433,7 @@ def download_reviews_for_app_id_batch(
     previously_processed_app_ids=None,
     chosen_request_params=None,
     verbose=False,
-):
+) -> bool:
     if input_app_ids is None:
         print(f"Loading {get_input_app_ids_filename()}")
         input_app_ids = list(app_id_reader())
