@@ -7,6 +7,10 @@
 
 This repository contains Python code to download every Steam review for the games of your choice.
 
+## Requirements
+
+-   Install the latest version of [Python 3.X](https://www.python.org/downloads/) (at least version 3.11).
+
 ## Installation
 
 The code is packaged for [PyPI](https://pypi.org/project/steamreviews/), so that the installation consists in running:
