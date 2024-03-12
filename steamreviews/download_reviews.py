@@ -228,12 +228,7 @@ def download_reviews_for_app_id_with_offset(
     ):
         cooldown_duration_for_bad_gateway = rate_limits["cooldown_bad_gateway"]
         print(
-            "{} Bad Gateway for appID = {} and cursor = {}. Cooldown: {} seconds".format(
-                status_code,
-                app_id,
-                cursor,
-                cooldown_duration_for_bad_gateway,
-            ),
+            f"{status_code} Bad Gateway for appID = {app_id} and cursor = {cursor}. Cooldown: {cooldown_duration_for_bad_gateway} seconds",
         )
         time.sleep(cooldown_duration_for_bad_gateway)
 
@@ -249,11 +244,7 @@ def download_reviews_for_app_id_with_offset(
     else:
         result = {"success": 0}
         print(
-            "Faulty response status code = {} for appID = {} and cursor = {}".format(
-                status_code,
-                app_id,
-                cursor,
-            ),
+            f"Faulty response status code = {status_code} for appID = {app_id} and cursor = {cursor}",
         )
 
     success_flag = bool(result["success"] == 1)
@@ -399,10 +390,7 @@ def download_reviews_for_app_id(
         if query_count >= rate_limits["max_num_queries"]:
             cooldown_duration = rate_limits["cooldown"]
             print(
-                "Number of queries {} reached. Cooldown: {} seconds".format(
-                    query_count,
-                    cooldown_duration,
-                ),
+                f"Number of queries {query_count} reached. Cooldown: {cooldown_duration} seconds",
             )
             time.sleep(cooldown_duration)
             query_count = 0
@@ -467,11 +455,7 @@ def download_reviews_for_app_id_batch(
         num_downloaded_reviews = len(review_dict["reviews"])
         num_expected_reviews = review_dict["query_summary"]["total_reviews"]
         print(
-            "[appID = {}] num_reviews = {} (expected: {})".format(
-                app_id,
-                num_downloaded_reviews,
-                num_expected_reviews,
-            ),
+            f"[appID = {app_id}] num_reviews = {num_downloaded_reviews} (expected: {num_expected_reviews})",
         )
 
     print(f"Game records written: {game_count}")
