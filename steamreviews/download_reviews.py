@@ -41,7 +41,7 @@ def app_id_reader(filename=None):
         filename = get_input_app_ids_filename()
 
     with Path(filename).open() as f:
-        for row in f.readlines():
+        for row in f:
             yield parse_app_id(row)
 
 
