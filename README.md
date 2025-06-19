@@ -5,6 +5,10 @@
 [![Code coverage][codecov-image]][codecov]
 [![Code Quality][codacy-image]][codacy]
 
+FORK from original woctezuma repository
+Main differences:
+1. Do not writes loaded reviews to the file, returns json that could used somehow else or printed
+
 This repository contains Python code to download every Steam review for the games of your choice.
 
 ## Requirements
