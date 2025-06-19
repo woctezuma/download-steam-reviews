@@ -7,6 +7,11 @@
 
 This repository contains Python code to download every Steam review for the games of your choice.
 
+FORK from original woctezuma repository
+
+Main differences:
+1. Returns json instead writing to the file
+
 ## Requirements
 
 -   Install the latest version of [Python 3.X](https://www.python.org/downloads/) (at least version 3.11).
