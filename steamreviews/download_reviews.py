@@ -185,10 +185,10 @@ def download_the_full_query_summary(
 
     (
         success_flag,
-        downloaded_reviews,
+        _downloaded_reviews,
         query_summary,
         query_count,
-        next_cursor,
+        _next_cursor,
     ) = download_reviews_for_app_id_with_offset(
         app_id,
         query_count,
