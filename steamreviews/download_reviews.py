@@ -166,6 +166,7 @@ def download_the_full_query_summary(
     app_id,
     query_count,
     chosen_request_params,
+    *,
     override_total_reviews=True,
 ):
     try:
@@ -185,10 +186,10 @@ def download_the_full_query_summary(
 
     (
         success_flag,
-        downloaded_reviews,
+        _downloaded_reviews,
         query_summary,
         query_count,
-        next_cursor,
+        _next_cursor,
     ) = download_reviews_for_app_id_with_offset(
         app_id,
         query_count,
@@ -267,6 +268,7 @@ def download_reviews_for_app_id(
     query_count=0,
     chosen_request_params=None,
     start_cursor="*",  # this could be useful to resume a failed download of older reviews
+    *,
     verbose=False,
 ):
     rate_limits = get_steam_api_rate_limits()
@@ -420,6 +422,7 @@ def download_reviews_for_app_id_batch(
     input_app_ids=None,
     previously_processed_app_ids=None,
     chosen_request_params=None,
+    *,
     verbose=False,
 ) -> bool:
     if input_app_ids is None:
