@@ -112,7 +112,7 @@ def get_data_path():
 def get_steam_api_url() -> str:
     # Objective: return the url of Steam API for reviews.
 
-    return "https://store.steampowered.com/appreviews/"
+    return "https://store.steampowered.com/ajaxappreviews/"
 
 
 def get_steam_api_rate_limits():
