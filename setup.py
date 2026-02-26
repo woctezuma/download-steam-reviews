@@ -7,7 +7,7 @@ with Path("README.md").open() as fh:
 
 setuptools.setup(
     name="steamreviews",
-    version="0.9.6",
+    version="0.9.6.1",
     author="Wok",
     author_email="wok@tuta.io",
     description="An API to download Steam reviews",
@@ -15,7 +15,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/woctezuma/download-steam-reviews",
-    download_url="https://github.com/woctezuma/download-steam-reviews/archive/0.9.6.tar.gz",
+    download_url="https://github.com/woctezuma/download-steam-reviews/archive/0.9.6.1.tar.gz",
     packages=setuptools.find_packages(),
     install_requires=[
         "requests",
