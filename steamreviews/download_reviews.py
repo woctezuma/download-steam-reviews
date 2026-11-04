@@ -220,7 +220,7 @@ def download_reviews_for_app_id_with_offset(
     req_data = get_request(app_id, chosen_request_params)
     req_data["cursor"] = str(cursor)
 
-    resp_data = requests.get(get_steam_api_url() + req_data["appids"], params=req_data)
+    resp_data = requests.get(get_steam_api_url() + req_data["appids"], params=req_data, timeout=30)
     status_code = resp_data.status_code
     query_count += 1
 
@@ -236,6 +236,7 @@ def download_reviews_for_app_id_with_offset(
         resp_data = requests.get(
             get_steam_api_url() + req_data["appids"],
             params=req_data,
+            timeout=30,
         )
         status_code = resp_data.status_code
         query_count += 1
