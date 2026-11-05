@@ -20,6 +20,7 @@ from pathlib import Path
 
 import requests
 
+TIMEOUT_IN_SECONDS = 30
 
 def parse_app_id(app_id):
     # Objective: return an app_id as an integer, no matter whether the input app_id is a string or an integer.
@@ -220,7 +221,7 @@ def download_reviews_for_app_id_with_offset(
     req_data = get_request(app_id, chosen_request_params)
     req_data["cursor"] = str(cursor)
 
-    resp_data = requests.get(get_steam_api_url() + req_data["appids"], params=req_data, timeout=30)
+    resp_data = requests.get(get_steam_api_url() + req_data["appids"], params=req_data, timeout=TIMEOUT_IN_SECONDS)
     status_code = resp_data.status_code
     query_count += 1
 
@@ -236,7 +237,7 @@ def download_reviews_for_app_id_with_offset(
         resp_data = requests.get(
             get_steam_api_url() + req_data["appids"],
             params=req_data,
-            timeout=30,
+            timeout=TIMEOUT_IN_SECONDS,
         )
         status_code = resp_data.status_code
         query_count += 1
