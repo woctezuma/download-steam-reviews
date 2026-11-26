@@ -13,6 +13,7 @@
 import copy
 import datetime
 import json
+import os
 import pathlib
 import time
 from http import HTTPStatus
@@ -21,6 +22,7 @@ from pathlib import Path
 import requests
 
 TIMEOUT_IN_SECONDS = 30
+
 
 def parse_app_id(app_id):
     # Objective: return an app_id as an integer, no matter whether the input app_id is a string or an integer.
@@ -79,14 +81,13 @@ def get_default_request_parameters(chosen_request_params=None):
     # Objective: return a dict of default paramters for a request to Steam API.
     #
     # References:
-    #   https://partner.steamgames.com/doc/store/getreviews
+    #   https://partner.steamgames.com/doc/webapi/IUserReviewsService#GetAppReviews
     #   https://partner.steamgames.com/doc/store/localization#supported_languages
     #   https://gist.github.com/adambuczek/95906b0c899c5311daeac515f740bf33
 
     default_request_parameters = {
-        "json": "1",
         "language": "all",  # API language code e.g. english or schinese
-        "filter": "recent",  # To work with 'start_offset', 'filter' has to be set to either recent or updated, not all.
+        "filter": "recent",  # To work with 'cursor', 'filter' has to be set to either recent or updated, not all.
         "review_type": "all",  # e.g. positive or negative
         "purchase_type": "all",  # e.g. steam or non_steam_purchase
         "num_per_page": "100",  # default is 20, maximum is 100
@@ -162,11 +163,71 @@ def load_review_dict(app_id):
     return review_dict
 
 
-def get_request(app_id, chosen_request_params=None):
-    request = dict(get_default_request_parameters(chosen_request_params))
-    request["appids"] = str(app_id)
+def get_filter_enum(filter_str):
+    # Objective: map a 'filter' value to EUserReviewsAppReviewsFilter.
+    # Reference: https://partner.steamgames.com/doc/webapi/IUserReviewsService#EUserReviewsAppReviewsFilter
+    filters = {
+        "all": 0,  # k_EUserReviewsAppReviewsFilter_Helpful
+        "recent": 1,  # k_EUserReviewsAppReviewsFilter_Recent
+        "updated": 2,  # k_EUserReviewsAppReviewsFilter_Updated
+        "funny": 3,  # k_EUserReviewsAppReviewsFilter_Funny
+    }
+    return filters[filter_str]
 
-    return request
+
+def get_review_type_enum(review_type_str):
+    # Objective: map a 'review_type' value to EUserReviewsReviewType.
+    # Reference: https://partner.steamgames.com/doc/webapi/IUserReviewsService#EUserReviewsReviewType
+    review_types = {
+        "all": 0,  # k_EUserReviewsReviewType_All
+        "positive": 1,  # k_EUserReviewsReviewType_Positive
+        "negative": 2,  # k_EUserReviewsReviewType_Negative
+    }
+    return review_types[review_type_str]
+
+
+def get_purchase_type_enum(purchase_type_str):
+    # Objective: map a 'purchase_type' value to EUserReviewsPurchaseType.
+    # Reference: https://partner.steamgames.com/doc/webapi/IUserReviewsService#EUserReviewsPurchaseType
+    purchase_types = {
+        "steam": 0,  # k_EUserReviewsPurchaseType_Steam
+        "all": 1,  # k_EUserReviewsPurchaseType_All
+        "non_steam_purchase": 2,  # k_EUserReviewsPurchaseType_NonSteamPurchase
+    }
+    return purchase_types[purchase_type_str]
+
+
+def get_request(app_id, chosen_request_params=None):
+    # Objective: build the 'input_json' payload of a request to the GetAppReviews Web API method.
+    #
+    # Reference: https://partner.steamgames.com/doc/webapi/IUserReviewsService#GetAppReviews
+    params = get_default_request_parameters(chosen_request_params)
+
+    input_json = {
+        "appid": int(app_id),
+        "filter": get_filter_enum(params["filter"]),
+        "languages": [params["language"]],
+        "review_type": get_review_type_enum(params["review_type"]),
+        "purchase_type": get_purchase_type_enum(params["purchase_type"]),
+        "num_per_page": int(params["num_per_page"]),
+    }
+
+    # Forward the remaining parameters (e.g. 'day_range', 'date_range_start', ...) as-is.
+    mapped_keys = {
+        "json",
+        "language",
+        "filter",
+        "review_type",
+        "purchase_type",
+        "num_per_page",
+    }
+    for key, raw_value in params.items():
+        if key in mapped_keys:
+            continue
+        value = int(raw_value) if key == "day_range" else raw_value
+        input_json[key] = value
+
+    return input_json
 
 
 def download_the_full_query_summary(
@@ -227,7 +288,18 @@ def download_reviews_for_app_id_with_offset(
     req_data = get_request(app_id, chosen_request_params)
     req_data["cursor"] = str(cursor)
 
-    resp_data = requests.get(get_steam_api_url() + req_data["appids"], params=req_data, timeout=TIMEOUT_IN_SECONDS)
+    # GetAppReviews is a Service interface: its parameters go in the 'input_json' parameter.
+    request_params = {"input_json": json.dumps(req_data)}
+    # Optional: a Steamworks Web API key associated with the app raises the rate limit.
+    steam_api_key = os.environ.get("STEAM_API_KEY")
+    if steam_api_key:
+        request_params["key"] = steam_api_key
+
+    resp_data = requests.get(
+        get_steam_api_url(),
+        params=request_params,
+        timeout=TIMEOUT_IN_SECONDS,
+    )
     status_code = resp_data.status_code
     query_count += 1
 
@@ -241,8 +313,8 @@ def download_reviews_for_app_id_with_offset(
         time.sleep(cooldown_duration_for_bad_gateway)
 
         resp_data = requests.get(
-            get_steam_api_url() + req_data["appids"],
-            params=req_data,
+            get_steam_api_url(),
+            params=request_params,
             timeout=TIMEOUT_IN_SECONDS,
         )
         status_code = resp_data.status_code
