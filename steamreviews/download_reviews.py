@@ -71,7 +71,7 @@ def get_processed_app_ids():
 
 
 def get_default_review_type() -> str:
-    # Reference: https://partner.steamgames.com/doc/store/getreviews
+    # Reference: https://partner.steamgames.com/doc/webapi/IUserReviewsService#GetAppReviews
     return "all"
 
 
@@ -112,8 +112,14 @@ def get_data_path():
 
 def get_steam_api_url() -> str:
     # Objective: return the url of Steam API for reviews.
+    #
+    # Since 2026-10-22, store.steampowered.com/appreviews/ is disabled (it redirects to the store
+    # home page). Reviews are now served by the IUserReviewsService/GetAppReviews Web API method,
+    # which does not require an API key.
+    #
+    # Reference: https://partner.steamgames.com/doc/webapi/IUserReviewsService#GetAppReviews
 
-    return "https://store.steampowered.com/ajaxappreviews/"
+    return "https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/"
 
 
 def get_steam_api_rate_limits():
