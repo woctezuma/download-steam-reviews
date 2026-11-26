@@ -321,14 +321,16 @@ def download_reviews_for_app_id_with_offset(
         query_count += 1
 
     if status_code == HTTPStatus.OK:
-        result = resp_data.json()
+        # The Web API wraps the payload in a "response" object, and there is no "success" field:
+        # the HTTP status code is the success flag.
+        result = resp_data.json().get("response", {})
     else:
-        result = {"success": 0}
+        result = {}
         print(
             f"Faulty response status code = {status_code} for appID = {app_id} and cursor = {cursor}",
         )
 
-    success_flag = bool(result["success"] == 1)
+    success_flag = status_code == HTTPStatus.OK
 
     try:
         downloaded_reviews = result["reviews"]
@@ -339,6 +341,12 @@ def download_reviews_for_app_id_with_offset(
         downloaded_reviews = []
         query_summary = get_dummy_query_summary()
         next_cursor = cursor
+
+    # The score fields of 'query_summary' (e.g. 'total_reviews') are only returned on the first
+    # page, and only when 'review_type' is "all". Otherwise, fall back on 'total_matching', the
+    # total number of reviews matching the query.
+    if "total_reviews" not in query_summary and "total_matching" in result:
+        query_summary["total_reviews"] = result["total_matching"]
 
     return success_flag, downloaded_reviews, query_summary, query_count, next_cursor
 
