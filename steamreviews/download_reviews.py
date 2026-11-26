@@ -130,6 +130,8 @@ def get_steam_api_rate_limits():
         "max_num_queries": 150,
         "cooldown": (5 * 60) + 10,  # 5 minutes plus a cushion
         "cooldown_bad_gateway": 10,  # arbitrary value to tackle 502 Bad Gateway due to saturated servers (during sales)
+        # 429 Too Many Requests: wait out the rate-limit window (keyless calls share a lower limit)
+        "cooldown_rate_limited": (5 * 60) + 10,
     }
 
 
@@ -303,14 +305,18 @@ def download_reviews_for_app_id_with_offset(
     status_code = resp_data.status_code
     query_count += 1
 
-    while (status_code == HTTPStatus.BAD_GATEWAY) and (
+    retryable_status_codes = (HTTPStatus.BAD_GATEWAY, HTTPStatus.TOO_MANY_REQUESTS)
+    while (status_code in retryable_status_codes) and (
         query_count < rate_limits["max_num_queries"]
     ):
-        cooldown_duration_for_bad_gateway = rate_limits["cooldown_bad_gateway"]
+        if status_code == HTTPStatus.TOO_MANY_REQUESTS:
+            cooldown_duration = rate_limits["cooldown_rate_limited"]
+        else:
+            cooldown_duration = rate_limits["cooldown_bad_gateway"]
         print(
-            f"{status_code} Bad Gateway for appID = {app_id} and cursor = {cursor}. Cooldown: {cooldown_duration_for_bad_gateway} seconds",
+            f"{status_code} for appID = {app_id} and cursor = {cursor}. Cooldown: {cooldown_duration} seconds",
         )
-        time.sleep(cooldown_duration_for_bad_gateway)
+        time.sleep(cooldown_duration)
 
         resp_data = requests.get(
             get_steam_api_url(),
